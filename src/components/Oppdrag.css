@@ -1,0 +1,42 @@
+.oppdrag-kort {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  margin: 8px 0;
+  background: var(--ziimo-cream);
+  border-radius: 12px;
+}
+
+.oppdrag-kort--fullfort {
+  background: var(--ziimo-green-light);
+}
+
+.oppdrag-tittel {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-black);
+}
+
+.oppdrag-poeng {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-black);
+}
+
+.oppdrag-knapp {
+  align-self: flex-start;
+  padding: 8px 16px;
+  background: var(--ziimo-green);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.oppdrag-knapp:hover {
+  background: var(--ziimo-green-dark);
+}

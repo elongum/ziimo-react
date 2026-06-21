@@ -1,4 +1,15 @@
 :root {
+  /* Ziimo farger */
+  --ziimo-green: #82A36C;
+  --ziimo-green-dark: #6b8a58;
+  --ziimo-green-light: #B9CDA1;
+  --ziimo-cream: #FDFAD5;
+  --color-black: #1a1a1a;
+
+  /* Ziimo fonter */
+  --font-heading: 'Baloo 2', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
+
   --text: #6b6375;
   --text-h: #08060d;
   --bg: #fff;
