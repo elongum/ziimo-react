@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import './App.css'
 import Oppdrag from './components/Oppdrag'
+import ForeldrePanel from './components/ForeldrePanel'
 
-const oppdragListe = [
+const startOppdrag = [
   { id: 1, tittel: "Rydd rommet ditt", poeng: 10 },
   { id: 2, tittel: "Hjelp til med middagen", poeng: 15 },
   { id: 3, tittel: "Les en bok", poeng: 20 },
@@ -11,6 +12,7 @@ const oppdragListe = [
 ]
 
 function App() {
+  const [oppdragListe, setOppdragListe] = useState(startOppdrag)
   const [fullforteIds, setFullforteIds] = useState(new Set())
 
   function toggleFullfort(id) {
@@ -19,6 +21,13 @@ function App() {
       neste.has(id) ? neste.delete(id) : neste.add(id)
       return neste
     })
+  }
+
+  function leggTilOppdrag(tittel, poeng) {
+    const nyId = oppdragListe.length > 0
+      ? Math.max(...oppdragListe.map(o => o.id)) + 1
+      : 1
+    setOppdragListe(prev => [...prev, { id: nyId, tittel, poeng }])
   }
 
   const totalePoeng = oppdragListe
@@ -41,6 +50,8 @@ function App() {
           onToggle={() => toggleFullfort(oppdrag.id)}
         />
       ))}
+      <div className="foreldre-separator" />
+      <ForeldrePanel onLeggTil={leggTilOppdrag} />
     </div>
   )
 }

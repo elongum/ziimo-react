@@ -25,3 +25,8 @@
   font-size: 20px;
   color: var(--ziimo-green);
 }
+
+.foreldre-separator {
+  margin: 32px 0 24px;
+  border-top: 2px dashed var(--ziimo-green-light);
+}
