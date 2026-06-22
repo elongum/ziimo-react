@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import Oppdrag from './components/Oppdrag'
 import ForeldrePanel from './components/ForeldrePanel'
@@ -12,8 +12,14 @@ const startOppdrag = [
 ]
 
 function App() {
-  const [oppdragListe, setOppdragListe] = useState(startOppdrag)
-  const [fullforteIds, setFullforteIds] = useState(new Set())
+  const [oppdragListe, setOppdragListe] = useState(() => {
+    const lagret = localStorage.getItem('ziimo-oppdrag')
+    return lagret ? JSON.parse(lagret) : startOppdrag
+  })
+  const [fullforteIds, setFullforteIds] = useState(() => {
+    const lagret = localStorage.getItem('ziimo-fullforte')
+    return lagret ? new Set(JSON.parse(lagret)) : new Set()
+  })
 
   function toggleFullfort(id) {
     setFullforteIds(prev => {
@@ -29,6 +35,14 @@ function App() {
       : 1
     setOppdragListe(prev => [...prev, { id: nyId, tittel, poeng }])
   }
+
+  useEffect(() => {
+    localStorage.setItem('ziimo-oppdrag', JSON.stringify(oppdragListe))
+  }, [oppdragListe])
+
+  useEffect(() => {
+    localStorage.setItem('ziimo-fullforte', JSON.stringify([...fullforteIds]))
+  }, [fullforteIds])
 
   const totalePoeng = oppdragListe
     .filter(o => fullforteIds.has(o.id))
