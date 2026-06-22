@@ -40,3 +40,13 @@
 .oppdrag-knapp:hover {
   background: var(--ziimo-green-dark);
 }
+
+.oppdrag-kort--last {
+  opacity: 0.45;
+}
+
+.oppdrag-last-melding {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-black);
+}

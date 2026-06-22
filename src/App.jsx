@@ -57,6 +57,20 @@ function App() {
 
   const [filter, setFilter] = useState('alle')
 
+  const BATCH = 3
+  let antallUlaste = BATCH
+  while (antallUlaste < oppdragListe.length) {
+    const gruppe = oppdragListe.slice(antallUlaste - BATCH, antallUlaste)
+    if (gruppe.every(o => fullforteIds.has(o.id))) {
+      antallUlaste += BATCH
+    } else {
+      break
+    }
+  }
+  antallUlaste = Math.min(antallUlaste, oppdragListe.length)
+
+  const lasteIds = new Set(oppdragListe.slice(antallUlaste).map(o => o.id))
+
   const totalePoeng = oppdragListe
     .filter(o => fullforteIds.has(o.id))
     .reduce((sum, o) => sum + o.poeng, 0)
@@ -81,6 +95,7 @@ function App() {
           tittel={oppdrag.tittel}
           poeng={oppdrag.poeng}
           fullfort={fullforteIds.has(oppdrag.id)}
+          låst={lasteIds.has(oppdrag.id)}
           onToggle={() => toggleFullfort(oppdrag.id)}
         />
       ))}
