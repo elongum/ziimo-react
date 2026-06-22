@@ -4,6 +4,7 @@ import './Oppdrag.css'
 function Oppdrag({ id }) {
   const { oppdragListe, fullforteIds, lasteIds, toggleFullfort } = useZiimo()
   const oppdrag = oppdragListe.find(o => o.id === id)
+  if (!oppdrag) return null
   const fullfort = fullforteIds.has(id)
   const låst = lasteIds.has(id)
 

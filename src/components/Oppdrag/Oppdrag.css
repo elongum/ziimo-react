@@ -29,7 +29,7 @@
   align-self: flex-start;
   padding: 8px 16px;
   background: var(--ziimo-green);
-  color: white;
+  color: var(--bg-white);
   border: none;
   border-radius: 999px;
   font-family: var(--font-body);

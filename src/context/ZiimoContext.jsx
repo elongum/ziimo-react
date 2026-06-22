@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react'
 
 const ZiimoContext = createContext(null)
 
@@ -37,46 +37,54 @@ export function ZiimoProvider({ children }) {
     localStorage.setItem('ziimo-fullforte', JSON.stringify([...fullforteIds]))
   }, [fullforteIds])
 
-  function toggleFullfort(id) {
+  const toggleFullfort = useCallback((id) => {
     setFullforteIds(prev => {
       const neste = new Set(prev)
       neste.has(id) ? neste.delete(id) : neste.add(id)
       return neste
     })
-  }
+  }, [])
 
-  function leggTilOppdrag(tittel, poeng) {
+  const leggTilOppdrag = useCallback((tittel, poeng) => {
     setOppdragListe(prev => {
       const nyId = prev.length > 0
         ? Math.max(...prev.map(o => o.id)) + 1
         : 1
       return [...prev, { id: nyId, tittel, poeng }]
     })
-  }
+  }, [])
 
-  const BATCH = 3
-  let antallUlaste = BATCH
-  while (antallUlaste < oppdragListe.length) {
-    const gruppe = oppdragListe.slice(antallUlaste - BATCH, antallUlaste)
-    if (gruppe.every(o => fullforteIds.has(o.id))) {
-      antallUlaste += BATCH
-    } else {
-      break
+  const antallUlaste = useMemo(() => {
+    const BATCH = 3
+    let count = BATCH
+    while (count < oppdragListe.length) {
+      const gruppe = oppdragListe.slice(count - BATCH, count)
+      if (gruppe.every(o => fullforteIds.has(o.id))) {
+        count += BATCH
+      } else {
+        break
+      }
     }
-  }
-  antallUlaste = Math.min(antallUlaste, oppdragListe.length)
+    return Math.min(count, oppdragListe.length)
+  }, [oppdragListe, fullforteIds])
 
-  const lasteIds = new Set(oppdragListe.slice(antallUlaste).map(o => o.id))
+  const lasteIds = useMemo(
+    () => new Set(oppdragListe.slice(antallUlaste).map(o => o.id)),
+    [oppdragListe, antallUlaste]
+  )
 
-  const totalePoeng = oppdragListe
-    .filter(o => fullforteIds.has(o.id))
-    .reduce((sum, o) => sum + o.poeng, 0)
+  const totalePoeng = useMemo(
+    () => oppdragListe
+      .filter(o => fullforteIds.has(o.id))
+      .reduce((sum, o) => sum + o.poeng, 0),
+    [oppdragListe, fullforteIds]
+  )
 
-  const visteListe = oppdragListe.filter(o => {
+  const visteListe = useMemo(() => oppdragListe.filter(o => {
     if (filter === 'gjenstaaende') return !fullforteIds.has(o.id)
     if (filter === 'fullforte') return fullforteIds.has(o.id)
     return true
-  })
+  }), [oppdragListe, fullforteIds, filter])
 
   return (
     <ZiimoContext.Provider value={{

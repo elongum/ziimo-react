@@ -7,6 +7,7 @@
   background: var(--bg-white);
   border-top: 2px solid var(--ziimo-green-light);
   z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .nav-lenke {

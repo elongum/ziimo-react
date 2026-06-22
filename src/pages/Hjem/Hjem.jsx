@@ -14,9 +14,13 @@ function Hjem() {
         <strong>{totalePoeng} ⭐</strong>
       </div>
       <FilterKnapper />
-      {visteListe.map((oppdrag) => (
-        <Oppdrag key={oppdrag.id} id={oppdrag.id} />
-      ))}
+      {visteListe.length === 0 ? (
+        <p className="hjem-tom">Ingen oppdrag her ennå – fortsett den gode jobben! 🌟</p>
+      ) : (
+        visteListe.map((oppdrag) => (
+          <Oppdrag key={oppdrag.id} id={oppdrag.id} />
+        ))
+      )}
     </div>
   )
 }
