@@ -1,5 +1,5 @@
 .app {
-  padding: 24px 24px 80px;
+  padding: 24px 24px calc(80px + env(safe-area-inset-bottom));
   max-width: 480px;
   margin: 0 auto;
 }

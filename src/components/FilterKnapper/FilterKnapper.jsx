@@ -16,6 +16,7 @@ function FilterKnapper() {
         <button
           key={verdi}
           className={`filter-knapp${filter === verdi ? ' filter-knapp--aktiv' : ''}`}
+          aria-pressed={filter === verdi}
           onClick={() => setFilter(verdi)}
         >
           {label}

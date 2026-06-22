@@ -17,7 +17,7 @@ function ForeldrePanel() {
 
   return (
     <section className="foreldre-panel">
-      <h2>For foreldre</h2>
+      <h2>Nytt oppdrag</h2>
       <p className="foreldre-ingress">Legg til nye oppdrag for barnet ditt.</p>
       <form className="foreldre-skjema" onSubmit={handleSubmit}>
         <label className="foreldre-label">

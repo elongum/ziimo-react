@@ -21,7 +21,11 @@ function Oppdrag({ id }) {
       {låst ? (
         <p className="oppdrag-last-melding">🔒 Fullfør forrige oppdrag for å låse opp</p>
       ) : (
-        <button className="oppdrag-knapp" onClick={() => toggleFullfort(id)}>
+        <button
+          className="oppdrag-knapp"
+          aria-pressed={fullfort}
+          onClick={() => toggleFullfort(id)}
+        >
           {fullfort ? '✅ Fullført!' : 'Merk som fullført'}
         </button>
       )}

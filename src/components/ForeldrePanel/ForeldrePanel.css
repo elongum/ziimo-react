@@ -6,7 +6,6 @@
 }
 
 .foreldre-panel h2 {
-  font-family: var(--font-heading);
   color: var(--ziimo-green);
   margin: 0 0 4px;
 }
@@ -51,7 +50,7 @@
   align-self: flex-start;
   padding: 10px 20px;
   background: var(--ziimo-green);
-  color: white;
+  color: var(--bg-white);
   border: none;
   border-radius: 999px;
   font-family: var(--font-body);

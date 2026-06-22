@@ -3,8 +3,14 @@ import { useZiimo } from '../../context/ZiimoContext'
 import Oppdrag from '../../components/Oppdrag/Oppdrag'
 import FilterKnapper from '../../components/FilterKnapper/FilterKnapper'
 
+const tomMelding = {
+  alle: 'Ingen oppdrag ennå – foreldre kan legge til oppdrag! 📋',
+  gjenstaaende: 'Alle oppdrag er fullført – så flink du er! 🎉',
+  fullforte: 'Ingen fullførte oppdrag ennå – du klarer det! 💪',
+}
+
 function Hjem() {
-  const { visteListe, totalePoeng } = useZiimo()
+  const { visteListe, totalePoeng, filter } = useZiimo()
 
   return (
     <div className="hjem">
@@ -15,7 +21,7 @@ function Hjem() {
       </div>
       <FilterKnapper />
       {visteListe.length === 0 ? (
-        <p className="hjem-tom">Ingen oppdrag her ennå – fortsett den gode jobben! 🌟</p>
+        <p className="hjem-tom">{tomMelding[filter]}</p>
       ) : (
         visteListe.map((oppdrag) => (
           <Oppdrag key={oppdrag.id} id={oppdrag.id} />
