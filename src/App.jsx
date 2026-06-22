@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './App.css'
-import Oppdrag from './components/Oppdrag/Oppdrag'
-import ForeldrePanel from './components/ForeldrePanel/ForeldrePanel'
-import FilterKnapper from './components/FilterKnapper/FilterKnapper'
+import Hjem from './pages/Hjem/Hjem'
+import Foreldre from './pages/Foreldre/Foreldre'
+import Nav from './components/Nav/Nav'
 
 const startOppdrag = [
   { id: 1, tittel: "Rydd rommet ditt", poeng: 10 },
@@ -29,6 +30,7 @@ function App() {
       return new Set()
     }
   })
+  const [filter, setFilter] = useState('alle')
 
   function toggleFullfort(id) {
     setFullforteIds(prev => {
@@ -55,8 +57,6 @@ function App() {
     localStorage.setItem('ziimo-fullforte', JSON.stringify([...fullforteIds]))
   }, [fullforteIds])
 
-  const [filter, setFilter] = useState('alle')
-
   const BATCH = 3
   let antallUlaste = BATCH
   while (antallUlaste < oppdragListe.length) {
@@ -82,26 +82,31 @@ function App() {
   })
 
   return (
-    <div className="app">
-      <h1>Ziimo oppdrag</h1>
-      <div className="poeng-teller">
-        <span>Totale poeng:</span>
-        <strong>{totalePoeng} ⭐</strong>
+    <BrowserRouter>
+      <div className="app">
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Hjem
+                visteListe={visteListe}
+                fullforteIds={fullforteIds}
+                lasteIds={lasteIds}
+                totalePoeng={totalePoeng}
+                filter={filter}
+                setFilter={setFilter}
+                toggleFullfort={toggleFullfort}
+              />
+            }
+          />
+          <Route
+            path="/foreldre"
+            element={<Foreldre onLeggTil={leggTilOppdrag} />}
+          />
+        </Routes>
+        <Nav />
       </div>
-      <FilterKnapper aktivtFilter={filter} onVelg={setFilter} />
-      {visteListe.map((oppdrag) => (
-        <Oppdrag
-          key={oppdrag.id}
-          tittel={oppdrag.tittel}
-          poeng={oppdrag.poeng}
-          fullfort={fullforteIds.has(oppdrag.id)}
-          låst={lasteIds.has(oppdrag.id)}
-          onToggle={() => toggleFullfort(oppdrag.id)}
-        />
-      ))}
-      <hr className="foreldre-separator" />
-      <ForeldrePanel onLeggTil={leggTilOppdrag} />
-    </div>
+    </BrowserRouter>
   )
 }
 

@@ -1,0 +1,20 @@
+.hjem {
+  display: flex;
+  flex-direction: column;
+}
+
+.poeng-teller {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  margin-bottom: 16px;
+  background: var(--ziimo-green-light);
+  border-radius: 12px;
+  font-family: var(--font-body);
+}
+
+.poeng-teller strong {
+  font-size: 20px;
+  color: var(--ziimo-green);
+}

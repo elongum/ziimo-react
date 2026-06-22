@@ -1,0 +1,29 @@
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background: var(--bg-white);
+  border-top: 2px solid var(--ziimo-green-light);
+  z-index: 100;
+}
+
+.nav-lenke {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 0;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-black);
+  text-decoration: none;
+  opacity: 0.45;
+}
+
+.nav-lenke--aktiv {
+  color: var(--ziimo-green);
+  opacity: 1;
+}
