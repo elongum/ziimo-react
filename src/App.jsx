@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import Oppdrag from './components/Oppdrag/Oppdrag'
 import ForeldrePanel from './components/ForeldrePanel/ForeldrePanel'
+import FilterKnapper from './components/FilterKnapper/FilterKnapper'
 
 const startOppdrag = [
   { id: 1, tittel: "Rydd rommet ditt", poeng: 10 },
@@ -54,9 +55,17 @@ function App() {
     localStorage.setItem('ziimo-fullforte', JSON.stringify([...fullforteIds]))
   }, [fullforteIds])
 
+  const [filter, setFilter] = useState('alle')
+
   const totalePoeng = oppdragListe
     .filter(o => fullforteIds.has(o.id))
     .reduce((sum, o) => sum + o.poeng, 0)
+
+  const visteListe = oppdragListe.filter(o => {
+    if (filter === 'gjenstaaende') return !fullforteIds.has(o.id)
+    if (filter === 'fullforte') return fullforteIds.has(o.id)
+    return true
+  })
 
   return (
     <div className="app">
@@ -65,7 +74,8 @@ function App() {
         <span>Totale poeng:</span>
         <strong>{totalePoeng} ⭐</strong>
       </div>
-      {oppdragListe.map((oppdrag) => (
+      <FilterKnapper aktivtFilter={filter} onVelg={setFilter} />
+      {visteListe.map((oppdrag) => (
         <Oppdrag
           key={oppdrag.id}
           tittel={oppdrag.tittel}
