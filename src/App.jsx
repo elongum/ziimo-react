@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
-import Oppdrag from './components/Oppdrag'
-import ForeldrePanel from './components/ForeldrePanel'
+import Oppdrag from './components/Oppdrag/Oppdrag'
+import ForeldrePanel from './components/ForeldrePanel/ForeldrePanel'
 
 const startOppdrag = [
   { id: 1, tittel: "Rydd rommet ditt", poeng: 10 },
@@ -13,12 +13,20 @@ const startOppdrag = [
 
 function App() {
   const [oppdragListe, setOppdragListe] = useState(() => {
-    const lagret = localStorage.getItem('ziimo-oppdrag')
-    return lagret ? JSON.parse(lagret) : startOppdrag
+    try {
+      const lagret = localStorage.getItem('ziimo-oppdrag')
+      return lagret ? JSON.parse(lagret) : startOppdrag
+    } catch {
+      return startOppdrag
+    }
   })
   const [fullforteIds, setFullforteIds] = useState(() => {
-    const lagret = localStorage.getItem('ziimo-fullforte')
-    return lagret ? new Set(JSON.parse(lagret)) : new Set()
+    try {
+      const lagret = localStorage.getItem('ziimo-fullforte')
+      return lagret ? new Set(JSON.parse(lagret)) : new Set()
+    } catch {
+      return new Set()
+    }
   })
 
   function toggleFullfort(id) {
@@ -30,10 +38,12 @@ function App() {
   }
 
   function leggTilOppdrag(tittel, poeng) {
-    const nyId = oppdragListe.length > 0
-      ? Math.max(...oppdragListe.map(o => o.id)) + 1
-      : 1
-    setOppdragListe(prev => [...prev, { id: nyId, tittel, poeng }])
+    setOppdragListe(prev => {
+      const nyId = prev.length > 0
+        ? Math.max(...prev.map(o => o.id)) + 1
+        : 1
+      return [...prev, { id: nyId, tittel, poeng }]
+    })
   }
 
   useEffect(() => {
@@ -64,7 +74,7 @@ function App() {
           onToggle={() => toggleFullfort(oppdrag.id)}
         />
       ))}
-      <div className="foreldre-separator" />
+      <hr className="foreldre-separator" />
       <ForeldrePanel onLeggTil={leggTilOppdrag} />
     </div>
   )

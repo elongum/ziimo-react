@@ -28,5 +28,6 @@
 
 .foreldre-separator {
   margin: 32px 0 24px;
+  border: none;
   border-top: 2px dashed var(--ziimo-green-light);
 }
