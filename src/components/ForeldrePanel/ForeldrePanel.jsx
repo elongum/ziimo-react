@@ -1,14 +1,16 @@
 import { useState } from 'react'
+import { useZiimo } from '../../context/ZiimoContext'
 import './ForeldrePanel.css'
 
-function ForeldrePanel({ onLeggTil }) {
+function ForeldrePanel() {
+  const { leggTilOppdrag } = useZiimo()
   const [tittel, setTittel] = useState('')
   const [poeng, setPoeng] = useState('')
 
   function handleSubmit(e) {
     e.preventDefault()
     if (!tittel.trim() || Number(poeng) < 1) return
-    onLeggTil(tittel.trim(), Number(poeng))
+    leggTilOppdrag(tittel.trim(), Number(poeng))
     setTittel('')
     setPoeng('')
   }

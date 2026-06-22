@@ -1,3 +1,4 @@
+import { useZiimo } from '../../context/ZiimoContext'
 import './FilterKnapper.css'
 
 const filtre = [
@@ -6,14 +7,16 @@ const filtre = [
   { verdi: 'fullforte', label: 'Fullførte' },
 ]
 
-function FilterKnapper({ aktivtFilter, onVelg }) {
+function FilterKnapper() {
+  const { filter, setFilter } = useZiimo()
+
   return (
     <div className="filter-knapper">
       {filtre.map(({ verdi, label }) => (
         <button
           key={verdi}
-          className={`filter-knapp${aktivtFilter === verdi ? ' filter-knapp--aktiv' : ''}`}
-          onClick={() => onVelg(verdi)}
+          className={`filter-knapp${filter === verdi ? ' filter-knapp--aktiv' : ''}`}
+          onClick={() => setFilter(verdi)}
         >
           {label}
         </button>
