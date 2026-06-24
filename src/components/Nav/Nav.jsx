@@ -3,12 +3,14 @@ import './Nav.css'
 
 function Nav() {
   return (
-    <nav className="nav">
+    <nav className="nav" aria-label="Navigasjon">
       <NavLink to="/" end className={({ isActive }) => `nav-lenke${isActive ? ' nav-lenke--aktiv' : ''}`}>
-        🏠 Oppdrag
+        <span className="nav-ikon">🏠</span>
+        <span className="nav-etikett">Hjem</span>
       </NavLink>
-      <NavLink to="/foreldre" className={({ isActive }) => `nav-lenke${isActive ? ' nav-lenke--aktiv' : ''}`}>
-        👨‍👩‍👧 Foreldre
+      <NavLink to="/oppdrag" className={({ isActive }) => `nav-lenke${isActive ? ' nav-lenke--aktiv' : ''}`}>
+        <span className="nav-ikon">🎯</span>
+        <span className="nav-etikett">Oppdrag</span>
       </NavLink>
     </nav>
   )

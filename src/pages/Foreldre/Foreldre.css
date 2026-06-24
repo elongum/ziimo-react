@@ -1,4 +1,396 @@
-.foreldre-side h1 {
-  color: var(--ziimo-green);
-  margin: 0 0 16px;
+.fp-pin-side {
+  animation: screen-inn 0.26s ease both;
 }
+
+/* ── PIN-kort ──────────────────────────────────── */
+.fp-pin-kort {
+  background: var(--bg-white);
+  border: 2.5px solid var(--ziimo-green-light);
+  border-radius: var(--radius-lg);
+  padding: 28px 22px 30px;
+  text-align: center;
+  box-shadow: 0 6px 28px var(--shadow-green);
+  margin-top: 16px;
+}
+
+.fp-pin-ikon { font-size: 2.4rem; margin-bottom: 10px; }
+
+.fp-pin-tittel {
+  color: var(--ziimo-green);
+  margin-bottom: 5px;
+}
+
+.fp-pin-sub {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-soft);
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.fp-pin-bokser {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.fp-pin-boks {
+  width: 52px;
+  height: 58px;
+  border: 2.5px solid var(--ziimo-green-light);
+  border-radius: var(--radius-md);
+  background: var(--ziimo-cream);
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 900;
+  text-align: center;
+  color: var(--ziimo-green);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fp-pin-boks:focus {
+  border-color: var(--ziimo-green);
+  box-shadow: 0 0 0 3px var(--shadow-green-focus);
+}
+
+.fp-pin-bokser .fp-pin-boks-feil {
+  border-color: #E05555;
+}
+
+@keyframes fp-rist {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
+}
+
+.fp-pin-rist { animation: fp-rist 0.5s ease; }
+
+.fp-pin-feil {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #E05555;
+  min-height: 1.2em;
+}
+
+/* ── Dashboard ─────────────────────────────────── */
+.fp-dashboard {
+  padding-top: 8px;
+  animation: screen-inn 0.26s ease both;
+}
+
+.fp-topprad {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.fp-tilbake-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--ziimo-green);
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.15s ease;
+}
+.fp-tilbake-btn:hover { opacity: 0.7; }
+
+.fp-dashboard-tittel {
+  color: var(--ziimo-green);
+  margin: 0;
+}
+
+/* ── Stat-kort ─────────────────────────────────── */
+.fp-stat-kort {
+  background: var(--bg-white);
+  border: 2.5px solid var(--ziimo-green-light);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 18px var(--shadow-green);
+}
+
+.fp-stat-etikett {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--ziimo-green);
+  margin-bottom: 10px;
+}
+
+.fp-stat-verdi {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--ziimo-green);
+  line-height: 1;
+}
+
+/* ── Inputs ────────────────────────────────────── */
+.fp-input-rad {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.fp-tekst-input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 13px;
+  border: 2.5px solid var(--ziimo-green-light);
+  border-radius: var(--radius-md);
+  background: var(--ziimo-cream);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fp-tekst-input::placeholder { color: rgba(80, 112, 64, 0.42); font-weight: 600; }
+
+.fp-tekst-input:focus {
+  border-color: var(--ziimo-green);
+  box-shadow: 0 0 0 3px rgba(130, 163, 108, 0.2);
+}
+
+.fp-poeng-input {
+  flex: 0 0 80px;
+  min-width: 0;
+}
+
+.fp-handling-btn {
+  background: var(--ziimo-green);
+  color: var(--bg-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 10px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s ease, transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.fp-handling-btn:hover  { background: var(--ziimo-green-dark); transform: translateY(-1px); }
+.fp-handling-btn:active { transform: scale(0.96); }
+
+.fp-handling-btn-full {
+  width: 100%;
+  justify-content: center;
+}
+
+.fp-input-rad--mb {
+  margin-bottom: 8px;
+}
+
+.fp-pin-melding--feil {
+  color: #E05555;
+}
+
+/* ── Belønninger ───────────────────────────────── */
+.fp-belonning-liste {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fp-belonning-element {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 11px;
+  background: var(--ziimo-cream);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--ziimo-green-light);
+}
+
+.fp-belonning-tekst {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+  word-break: break-word;
+  line-height: 1.35;
+}
+
+.fp-belonning-slett {
+  background: none;
+  border: none;
+  color: #C04040;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 4px;
+  flex-shrink: 0;
+  transition: opacity 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.fp-belonning-slett:hover { opacity: 0.6; }
+
+.fp-belonning-tom {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-soft);
+  padding: 6px 0 2px;
+  text-align: center;
+}
+
+/* ── Uke-prikker ───────────────────────────────── */
+.fp-uke-prikker {
+  display: flex;
+  gap: 6px;
+}
+
+.fp-dag-prikk {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.fp-dag-prikk::before {
+  content: '';
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(185, 205, 161, 0.25);
+  border: 2px solid var(--ziimo-green-light);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.fp-dag-prikk-aktiv::before {
+  background: var(--ziimo-green);
+  border-color: var(--ziimo-green);
+}
+
+.fp-dag-prikk-i-dag::before {
+  border-color: var(--ziimo-green-dark);
+}
+
+.fp-dag-etikett {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--text-soft);
+}
+
+/* ── Streak ────────────────────────────────────── */
+.fp-streak-rad {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.fp-streak-enhet {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-soft);
+}
+
+/* ── PIN-melding ───────────────────────────────── */
+.fp-pin-melding {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ziimo-green);
+  margin-top: 8px;
+}
+
+/* ── Nullstill-knapp ───────────────────────────── */
+.fp-nullstill-btn {
+  background: #D94F4F;
+  color: var(--bg-white);
+  box-shadow: 0 4px 14px rgba(217, 79, 79, 0.3);
+  margin-top: 6px;
+  margin-bottom: 16px;
+}
+.fp-nullstill-btn:hover { background: #C04040; transform: translateY(-2px); }
+
+/* ── Bekreftelsesdialog ────────────────────────── */
+.fp-bekreft-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 810;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.fp-bekreft-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.fp-bekreft-kort {
+  background: var(--bg-white);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  width: 100%;
+  max-width: 340px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+  animation: bekreft-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes bekreft-pop {
+  from { transform: scale(0.4) rotate(-4deg); opacity: 0; }
+  to   { transform: scale(1) rotate(0deg);    opacity: 1; }
+}
+
+.fp-bekreft-tekst {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.fp-bekreft-knapper {
+  display: flex;
+  gap: 10px;
+}
+
+.fp-bekreft-avbryt {
+  flex: 1;
+  background: var(--ziimo-cream);
+  color: var(--text);
+  border: 2.5px solid var(--ziimo-green-light);
+}
+.fp-bekreft-avbryt:hover { background: var(--ziimo-green-light); }
+
+.fp-bekreft-ok {
+  flex: 1;
+  background: #E05555;
+  color: var(--bg-white);
+  box-shadow: 0 3px 12px rgba(224, 85, 85, 0.3);
+}
+.fp-bekreft-ok:hover { background: #C94444; }

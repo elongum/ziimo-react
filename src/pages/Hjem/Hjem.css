@@ -1,29 +1,50 @@
 .hjem {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  padding-top: 60px;
+  animation: screen-inn 0.26s ease both;
 }
 
-.hjem-tom {
-  font-family: var(--font-body);
-  font-size: 15px;
-  color: var(--color-black);
-  text-align: center;
-  padding: 32px 0;
-  opacity: 0.6;
-}
-
-.poeng-teller {
+.hjem-hero {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  padding: 16px;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 0 12px;
   margin-bottom: 16px;
-  background: var(--ziimo-green-light);
-  border-radius: 12px;
-  font-family: var(--font-body);
 }
 
-.poeng-teller strong {
-  font-size: 20px;
+.hjem-maskot-container {
+  width: 120px;
+  min-width: 120px;
+  flex-shrink: 0;
+  animation: float-hjem 3.2s ease-in-out infinite;
+}
+
+.hjem-maskot { width: 100%; display: block; }
+
+@keyframes float-hjem {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  45%       { transform: translateY(-11px) rotate(1.5deg); }
+  55%       { transform: translateY(-11px) rotate(-1.5deg); }
+}
+
+.hjem-velkommen { text-align: left; }
+
+.hjem-hilsen {
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  font-weight: 900;
   color: var(--ziimo-green);
+  line-height: 1.2;
+  margin-bottom: 3px;
+}
+
+.hjem-sub {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-soft);
+  line-height: 1.4;
 }

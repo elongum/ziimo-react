@@ -1,32 +1,36 @@
 import './Hjem.css'
+import { useNavigate } from 'react-router-dom'
+import DagligFremgang from '../../components/DagligFremgang/DagligFremgang'
+import UkentligFremgang from '../../components/UkentligFremgang/UkentligFremgang'
 import { useZiimo } from '../../context/ZiimoContext'
-import Oppdrag from '../../components/Oppdrag/Oppdrag'
-import FilterKnapper from '../../components/FilterKnapper/FilterKnapper'
-
-const tomMelding = {
-  alle: 'Ingen oppdrag ennå – foreldre kan legge til oppdrag! 📋',
-  gjenstaaende: 'Alle oppdrag er fullført – så flink du er! 🎉',
-  fullforte: 'Ingen fullførte oppdrag ennå – du klarer det! 💪',
-}
+import { DAG_MAL } from '../../utils/dato'
 
 function Hjem() {
-  const { visteListe, totalePoeng, filter } = useZiimo()
+  const navigate = useNavigate()
+  const { dagensFullfort, antallUlaste, barnNavn } = useZiimo()
+  const alleFullfortIdag = antallUlaste > 0 && dagensFullfort >= Math.min(antallUlaste, DAG_MAL)
 
   return (
     <div className="hjem">
-      <h1>Ziimo oppdrag</h1>
-      <div className="poeng-teller">
-        <span>Totale poeng:</span>
-        <strong>{totalePoeng} ⭐</strong>
+
+      <div className="hjem-hero">
+        <div className="hjem-maskot-container">
+          <img src="/ziimo.png" alt="Ziimo maskot" className="hjem-maskot" />
+        </div>
+        <div className="hjem-velkommen">
+          <p className="hjem-hilsen">God dag, {barnNavn || 'utforsker'}!</p>
+          <p className="hjem-sub">Ziimo er klar for et nytt eventyr!</p>
+        </div>
       </div>
-      <FilterKnapper />
-      {visteListe.length === 0 ? (
-        <p className="hjem-tom">{tomMelding[filter]}</p>
-      ) : (
-        visteListe.map((oppdrag) => (
-          <Oppdrag key={oppdrag.id} id={oppdrag.id} />
-        ))
-      )}
+
+      <DagligFremgang />
+      <UkentligFremgang />
+
+      <button className="btn btn-cta" onClick={() => navigate('/oppdrag')}>
+        <span className="btn-emoji">🚀</span>
+        <span>{alleFullfortIdag ? 'Se alle oppdrag!' : 'Start dagens oppdrag!'}</span>
+      </button>
+
     </div>
   )
 }

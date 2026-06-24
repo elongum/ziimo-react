@@ -1,0 +1,243 @@
+.oppdrag-screen {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  animation: screen-inn 0.26s ease both;
+}
+
+/* ── Filter ─────────────────────────────────── */
+.filter-seksjon {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 4px 0 8px;
+}
+
+.filter-rad {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-etikett {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text-soft);
+  min-width: 30px;
+  flex-shrink: 0;
+}
+
+.filter-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.filter-chip {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--ziimo-green-light);
+  background: var(--bg-white);
+  color: var(--text-soft);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  white-space: nowrap;
+}
+.filter-chip:active { transform: scale(0.93); }
+.filter-chip:hover  { background: var(--ziimo-cream); }
+.filter-chip.active { background: var(--ziimo-green); border-color: var(--ziimo-green); color: var(--bg-white); }
+
+.filter-chip:focus-visible {
+  outline: 2px solid var(--ziimo-green);
+  outline-offset: 2px;
+}
+
+/* ── Maskot + snakkeboble ────────────────────── */
+.maskot-seksjon {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 6px 0 10px;
+  flex-shrink: 0;
+}
+
+.maskot-container {
+  position: relative;
+  width: 120px;
+  min-width: 120px;
+  animation: float 3.2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.maskot-container.celebrating {
+  animation: celebrate 0.55s ease-in-out infinite alternate;
+}
+
+.ziimo-bilde {
+  width: 120px;
+  display: block;
+  margin: 0 auto;
+  height: auto;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  45%       { transform: translateY(-11px) rotate(1.5deg); }
+  55%       { transform: translateY(-11px) rotate(-1.5deg); }
+}
+
+@keyframes celebrate {
+  from { transform: translateY(0) rotate(-6deg) scale(1); }
+  to   { transform: translateY(-18px) rotate(6deg) scale(1.08); }
+}
+
+/* Deco-stjerner */
+.deco-star {
+  position: absolute;
+  font-size: 1.3rem;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.s1 { top: -6px;    right: 12px; }
+.s2 { top: 14px;    right: -8px; }
+.s3 { top: -4px;    left: 10px;  }
+.s4 { bottom: 28px; right: -4px; }
+
+.maskot-container.celebrating .deco-star { animation: star-pop 0.7s ease-out infinite; }
+.maskot-container.celebrating .s1 { animation-delay: 0s; }
+.maskot-container.celebrating .s2 { animation-delay: 0.18s; }
+.maskot-container.celebrating .s3 { animation-delay: 0.36s; }
+.maskot-container.celebrating .s4 { animation-delay: 0.54s; }
+
+@keyframes star-pop {
+  0%   { opacity: 0; transform: scale(0.4) translateY(0); }
+  45%  { opacity: 1; transform: scale(1.4) translateY(-8px); }
+  100% { opacity: 0; transform: scale(0.8) translateY(-20px); }
+}
+
+/* Snakkeboble */
+.snakkeboble {
+  flex: 1;
+  background: var(--bg-white);
+  border: 2.5px solid var(--ziimo-green-light);
+  border-radius: var(--radius-md);
+  border-bottom-left-radius: 5px;
+  padding: 13px 15px;
+  box-shadow: 0 4px 16px var(--shadow-green);
+  position: relative;
+}
+
+.snakkeboble::before,
+.snakkeboble::after {
+  content: '';
+  position: absolute;
+  top: 22px;
+  border: 9px solid transparent;
+}
+.snakkeboble::before { left: -20px; border-right-color: var(--ziimo-green-light); }
+.snakkeboble::after  { left: -16px; border-right-color: var(--bg-white); }
+
+.snakkeboble-tekst {
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+/* ── Oppdrag-kort ────────────────────────────── */
+.oppdrag-kort-seksjon {
+  flex: 1;
+  display: flex;
+  padding: 4px 0 10px;
+}
+
+.oppdrag-kort-wrapper {
+  width: 100%;
+  background: var(--bg-white);
+  border: 2.5px solid var(--ziimo-green-light);
+  border-radius: var(--radius-lg);
+  padding: 22px 22px 24px;
+  box-shadow: 0 6px 28px var(--shadow-green);
+}
+
+.oppdrag-kort-wrapper.appear {
+  animation: kort-inn 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes kort-inn {
+  from { transform: translateY(18px) scale(0.95); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.oppdrag-kort-topp {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.oppdrag-kort-badges {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.oppdrag-ikon { font-size: 2.2rem; line-height: 1; }
+
+.oppdrag-tittel {
+  font-family: var(--font-heading);
+  font-size: 1.55rem;
+  font-weight: 900;
+  color: var(--ziimo-green);
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
+.oppdrag-beskrivelse {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.65;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.oppdrag-poeng-badge {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text-soft);
+}
+
+/* ── Knapper ─────────────────────────────────── */
+.knapper-seksjon {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+/* ── Tomme tilstander ────────────────────────── */
+.oppdrag-tom-state,
+.oppdrag-ferdig-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px 16px;
+  gap: 8px;
+}
+
+.oppdrag-tom-state p { font-size: 0.95rem; font-weight: 700; color: var(--text-soft); }
+.oppdrag-ferdig-emoji  { font-size: 4rem; line-height: 1; }
+.oppdrag-ferdig-tittel { font-family: var(--font-heading); font-size: 2rem; font-weight: 900; color: var(--ziimo-green); }
+.oppdrag-ferdig-tekst  { font-size: 0.95rem; font-weight: 700; color: var(--text-soft); }

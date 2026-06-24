@@ -1,10 +1,7 @@
 .app {
-  padding: 24px 24px calc(80px + env(safe-area-inset-bottom));
-  max-width: 480px;
-  margin: 0 auto;
-}
-
-.app h1 {
-  color: var(--ziimo-green);
-  margin: 0 0 16px;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px calc(86px + env(safe-area-inset-bottom));
 }
