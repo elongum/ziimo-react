@@ -1,6 +1,8 @@
 # Ziimo
 
-A gamified chore app for kids aged 4–10. Children complete daily missions to earn points, while parents manage tasks and track progress through a PIN-protected panel.
+Ziimo is a Norwegian children's app designed to make screen time meaningful. Instead of passive content, a curious space mascot guides children aged 4–10 through missions and discoveries that encourage learning, creativity and physical activity — both on and off the screen.
+
+**Mission:** To make screen time healthier and more meaningful for children through play, exploration and learning.
 
 > **Note:** The UI is intentionally in Norwegian to match the target audience.
 
