@@ -1,16 +1,58 @@
-# React + Vite
+# Ziimo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A gamified chore app for kids aged 4–10. Children complete daily missions to earn points, while parents manage tasks and track progress through a PIN-protected panel.
 
-Currently, two official plugins are available:
+> **Note:** The UI is intentionally in Norwegian to match the target audience.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+![Ziimo screenshot placeholder](public/ziimo.png)
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- **React 19** + **Vite** – component-based UI with fast dev server
+- **React Router v7** – client-side routing between Home, Missions, and Parent Panel
+- **Context API** – global state for missions, progress, and parent settings
+- **localStorage** – client-side persistence, no backend required
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## Features
+
+- 🎯 **Daily missions** – curated tasks with descriptions, point values, and categories
+- 📊 **Progress tracking** – daily pip counters, weekly bar chart, and streak counter
+- 🔒 **Mission unlocking** – missions unlock in batches of 3 as previous ones are completed
+- 👨‍👩‍👧 **Parent panel** – PIN-protected dashboard to add missions, set rewards, and view stats
+- 🏠 **Home screen** – personalised greeting, daily goal card, and weekly overview
+- 💾 **Persistent state** – all progress and settings survive page refreshes
+
+---
+
+## Getting Started
+
+```bash
+git clone https://github.com/yourusername/ziimo-react.git
+cd ziimo-react
+npm install
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+**Default parent PIN:** `1234` (changeable from the parent panel)
+
+---
+
+## Roadmap
+
+- [ ] **Backend** – Node.js / Supabase for multi-device sync and persistent accounts
+- [ ] **Authentication** – child profiles with secure parent login
+- [ ] **React Native** – cross-platform mobile app (iOS + Android)
+- [ ] **Dark mode** – full theme support
+- [ ] **Sound effects** – audio feedback on mission completion
+
+---
+
+## License
+
+MIT
