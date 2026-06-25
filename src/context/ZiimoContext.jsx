@@ -58,6 +58,24 @@ export function ZiimoProvider({ children }) {
   useEffect(() => { localStorage.setItem('ziimo-barnnavn',   barnNavn)                       }, [barnNavn])
   useEffect(() => { localStorage.setItem('ziimo-belonninger', JSON.stringify(belonninger))   }, [belonninger])
 
+  useEffect(() => {
+    fetch('http://localhost:3001/api/oppdrag')
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        return res.json()
+      })
+      .then(apiOppdrag => {
+        setOppdragListe(prev => {
+          const apiIds = new Set(apiOppdrag.map(o => o.id))
+          const brukerOppdrag = prev.filter(o => !apiIds.has(o.id))
+          return [...apiOppdrag, ...brukerOppdrag]
+        })
+      })
+      .catch(() => {
+        // API ikke tilgjengelig – beholder nåværende state (localStorage eller hardkodet liste)
+      })
+  }, [])
+
   const toggleFullfort = useCallback((id) => {
     const iDag = new Date().toISOString().slice(0, 10)
     const blerFullfort = !fullforteIds.has(id)
