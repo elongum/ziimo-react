@@ -1,2 +1,5 @@
 node_modules/
 .env
+db/ziimo.db
+db/ziimo.db-shm
+db/ziimo.db-wal
