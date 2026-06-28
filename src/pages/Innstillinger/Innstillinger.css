@@ -94,7 +94,7 @@
   font-family: var(--font-heading);
   font-size: 0.95rem;
   font-weight: 800;
-  color: #D94F4F;
+  color: var(--color-danger);
 }
 .innstillinger-rad-fare:hover { opacity: 0.72; }
 
@@ -160,69 +160,4 @@
 
 .toggle-switch input:checked + .toggle-track .toggle-thumb { transform: translateX(22px); }
 
-/* ── Bekreftelsesdialog ───────────────────────── */
-.innstillinger-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  z-index: 810;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-}
-
-.innstillinger-overlay.active {
-  opacity: 1;
-  pointer-events: all;
-}
-
-.innstillinger-dialog {
-  background: var(--bg-white);
-  border-radius: var(--radius-lg);
-  padding: 28px 24px;
-  width: 100%;
-  max-width: 340px;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
-  animation: dialog-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-
-@keyframes dialog-pop {
-  from { transform: scale(0.4) rotate(-4deg); opacity: 0; }
-  to   { transform: scale(1) rotate(0deg);    opacity: 1; }
-}
-
-.innstillinger-dialog-tekst {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--text);
-  text-align: center;
-  margin-bottom: 20px;
-  line-height: 1.5;
-}
-
-.innstillinger-dialog-knapper {
-  display: flex;
-  gap: 10px;
-}
-
-.innstillinger-avbryt-btn {
-  flex: 1;
-  background: var(--ziimo-cream);
-  color: var(--text);
-  border: 2.5px solid var(--ziimo-green-light);
-}
-.innstillinger-avbryt-btn:hover { background: var(--ziimo-green-light); }
-
-.innstillinger-slett-btn {
-  flex: 1;
-  background: #E05555;
-  color: var(--bg-white);
-  box-shadow: 0 3px 12px rgba(224, 85, 85, 0.3);
-}
-.innstillinger-slett-btn:hover { background: #C94444; }
+/* Dialog-stiler er delt – se index.css (.dialog-overlay, .dialog-kort osv.) */

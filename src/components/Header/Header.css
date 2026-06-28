@@ -64,6 +64,31 @@
   color: var(--text-soft);
 }
 
+/* ── Bruker-chip (foreldre/innstillinger) ─────── */
+.bruker-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-white);
+  border: 2px solid var(--ziimo-green-light);
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 2px 8px var(--shadow-green);
+}
+
+.bruker-chip-ikon { font-size: 0.9rem; }
+
+.bruker-chip-navn {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--ziimo-green);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* ── Hamburger ────────────────────────────────── */
 .hamburger-btn {
   display: flex;

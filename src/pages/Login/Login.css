@@ -1,0 +1,141 @@
+.login-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+  animation: screen-inn 0.26s ease both;
+}
+
+.login-logo {
+  font-family: var(--font-heading);
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: var(--ziimo-green);
+  letter-spacing: -0.5px;
+  text-shadow: 2px 3px 0 var(--shadow-green-logo);
+  margin-bottom: 24px;
+  user-select: none;
+}
+
+.login-kort {
+  background: var(--bg-white);
+  border: 2.5px solid var(--ziimo-green-light);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px 32px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 6px 28px var(--shadow-green);
+  text-align: center;
+}
+
+.login-ikon {
+  font-size: 2.4rem;
+  margin-bottom: 16px;
+}
+
+/* ── Tabs ─────────────────────────────────────── */
+.login-tabs {
+  display: flex;
+  gap: 6px;
+  background: var(--ziimo-cream);
+  border-radius: var(--radius-pill);
+  padding: 4px;
+  margin-bottom: 24px;
+}
+
+.login-tab {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text-soft);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.login-tab--aktiv {
+  background: var(--bg-white);
+  color: var(--ziimo-green);
+  box-shadow: 0 2px 8px var(--shadow-green);
+}
+
+/* ── Skjema ───────────────────────────────────── */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+}
+
+.login-label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.login-input {
+  padding: 11px 14px;
+  border: 2.5px solid var(--ziimo-green-light);
+  border-radius: var(--radius-md);
+  background: var(--ziimo-cream);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-input::placeholder {
+  color: rgba(80, 112, 64, 0.42);
+  font-weight: 600;
+}
+
+.login-input:focus {
+  border-color: var(--ziimo-green);
+  box-shadow: 0 0 0 3px var(--shadow-green-focus);
+}
+
+.login-feil {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-danger);
+  text-align: center;
+  margin: 0;
+}
+
+.login-knapp {
+  width: 100%;
+  padding: 14px;
+  background: var(--ziimo-green);
+  color: var(--bg-white);
+  border: none;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 4px;
+  box-shadow: 0 5px 18px var(--shadow-green-btn);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.login-knapp:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px var(--shadow-green-btn-hover);
+}
+
+.login-knapp:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

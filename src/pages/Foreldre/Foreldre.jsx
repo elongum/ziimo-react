@@ -1,84 +1,13 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './Foreldre.css'
 import { useZiimo } from '../../context/ZiimoContext'
+import { useAuth } from '../../context/AuthContext'
 import { ukensDager, beregnStreak } from '../../utils/dato'
 
-const STANDARD_PIN = '1234'
-
-/* ── PIN-innlogging ───────────────────────────── */
-function PinInnlogging({ onSuksess }) {
-  const [sifre, setSifre]     = useState(['', '', '', ''])
-  const [feil, setFeil]       = useState('')
-  const [rister, setRister]   = useState(false)
-  const refs = [useRef(null), useRef(null), useRef(null), useRef(null)]
-
-  useEffect(() => { refs[0].current?.focus() }, [])
-
-  const verifiser = useCallback((nyeSifre) => {
-    const pin = nyeSifre.join('')
-    const lagretPin = localStorage.getItem('ziimo-pin') ?? STANDARD_PIN
-    if (pin === lagretPin) {
-      onSuksess()
-    } else {
-      setRister(true)
-      setFeil('Feil PIN-kode. Prøv igjen.')
-      setTimeout(() => {
-        setRister(false)
-        setSifre(['', '', '', ''])
-        refs[0].current?.focus()
-      }, 550)
-    }
-  }, [onSuksess])
-
-  function handleInput(index, value) {
-    if (!/^\d$/.test(value) && value !== '') return
-    const nyeSifre = [...sifre]
-    nyeSifre[index] = value
-    setSifre(nyeSifre)
-    setFeil('')
-    if (value && index < 3) refs[index + 1].current?.focus()
-    if (nyeSifre.every(s => s !== '')) verifiser(nyeSifre)
-  }
-
-  function handleKeyDown(index, e) {
-    if (e.key === 'Backspace' && !sifre[index] && index > 0) {
-      const nyeSifre = [...sifre]
-      nyeSifre[index - 1] = ''
-      setSifre(nyeSifre)
-      refs[index - 1].current?.focus()
-    }
-  }
-
-  return (
-    <div className="fp-pin-side">
-      <div className="fp-pin-kort">
-        <div className="fp-pin-ikon">👨‍👩‍👧</div>
-        <h2 className="fp-pin-tittel">Foreldrepanel</h2>
-        <p className="fp-pin-sub">Skriv inn PIN-koden for å fortsette</p>
-        <div className={`fp-pin-bokser${rister ? ' fp-pin-rist' : ''}`}>
-          {sifre.map((s, i) => (
-            <input
-              key={i}
-              ref={refs[i]}
-              className={`fp-pin-boks${rister ? ' fp-pin-boks-feil' : ''}`}
-              type="password"
-              inputMode="numeric"
-              maxLength={1}
-              value={s}
-              onChange={e => handleInput(i, e.target.value)}
-              onKeyDown={e => handleKeyDown(i, e)}
-              aria-label={`Siffer ${i + 1}`}
-            />
-          ))}
-        </div>
-        <p className="fp-pin-feil" aria-live="polite">{feil}</p>
-      </div>
-    </div>
-  )
-}
-
-/* ── Dashboard ────────────────────────────────── */
-function Dashboard({ onLoggUt }) {
+function Foreldre() {
+  const navigate = useNavigate()
+  const { loggUt, bruker } = useAuth()
   const {
     fullforteIds, ukentligData,
     barnNavn, belonninger,
@@ -90,9 +19,6 @@ function Dashboard({ onLoggUt }) {
   const [belonningInput, setBelonningInput] = useState('')
   const [oppdragInput,   setOppdragInput]   = useState('')
   const [poengInput,     setPoengInput]     = useState('')
-  const [gjeldendePin,   setGjeldendePin]   = useState('')
-  const [nyttPin,        setNyttPin]        = useState('')
-  const [pinMelding,     setPinMelding]     = useState('')
   const [visNullstill,   setVisNullstill]   = useState(false)
 
   const dager  = ukensDager()
@@ -100,9 +26,12 @@ function Dashboard({ onLoggUt }) {
   const total  = fullforteIds.size
   const streak = beregnStreak(ukentligData)
 
-  function lagreNavn() {
-    lagreBarnNavn(navnInput.trim())
+  function handleLoggUt() {
+    loggUt()
+    navigate('/login', { replace: true })
   }
+
+  function lagreNavn() { lagreBarnNavn(navnInput.trim()) }
 
   function handleLeggTilBelonning() {
     const t = belonningInput.trim()
@@ -113,40 +42,20 @@ function Dashboard({ onLoggUt }) {
 
   function handleLeggTilOppdrag() {
     const t = oppdragInput.trim()
-    const p = Number(poengInput)
-    if (!t || p < 1) return
+    const p = parseInt(poengInput, 10)
+    if (!t || !Number.isInteger(p) || p < 1 || p > 1000) return
     leggTilOppdrag(t, p)
     setOppdragInput('')
     setPoengInput('')
   }
 
-  function byttPin() {
-    const lagretPin = localStorage.getItem('ziimo-pin') ?? STANDARD_PIN
-    if (gjeldendePin !== lagretPin) {
-      setPinMelding('Feil nåværende PIN-kode.')
-      return
-    }
-    if (!/^\d{4}$/.test(nyttPin)) {
-      setPinMelding('Ny PIN må være 4 siffer.')
-      return
-    }
-    localStorage.setItem('ziimo-pin', nyttPin)
-    setGjeldendePin('')
-    setNyttPin('')
-    setPinMelding('PIN oppdatert! ✅')
-    setTimeout(() => setPinMelding(''), 3000)
-  }
-
-  function bekreftNullstill() {
-    nullstillProgresjon()
-    setVisNullstill(false)
-  }
-
   return (
     <div className="fp-dashboard">
       <div className="fp-topprad">
-        <button className="fp-tilbake-btn" onClick={onLoggUt}>← Logg ut</button>
-        <h2 className="fp-dashboard-tittel">Foreldrepanel</h2>
+        <button className="fp-tilbake-btn" onClick={handleLoggUt}>← Logg ut</button>
+        <h2 className="fp-dashboard-tittel">
+          {bruker?.navn ? `Hei, ${bruker.navn}` : 'Foreldrepanel'}
+        </h2>
       </div>
 
       {/* Barnets navn */}
@@ -168,7 +77,7 @@ function Dashboard({ onLoggUt }) {
         </div>
       </div>
 
-      {/* Nytt oppdrag */}
+      {/* Legg til oppdrag */}
       <div className="fp-stat-kort">
         <span className="fp-stat-etikett">Legg til oppdrag</span>
         <div className="fp-input-rad fp-input-rad--mb">
@@ -263,63 +172,22 @@ function Dashboard({ onLoggUt }) {
         </div>
       </div>
 
-      {/* Bytt PIN – krever nåværende PIN */}
-      <div className="fp-stat-kort">
-        <span className="fp-stat-etikett">Bytt PIN-kode</span>
-        <div className="fp-input-rad fp-input-rad--mb">
-          <input
-            className="fp-tekst-input"
-            type="password"
-            inputMode="numeric"
-            maxLength={4}
-            value={gjeldendePin}
-            placeholder="Nåværende PIN"
-            onChange={e => { setGjeldendePin(e.target.value); setPinMelding('') }}
-          />
-        </div>
-        <div className="fp-input-rad">
-          <input
-            className="fp-tekst-input"
-            type="password"
-            inputMode="numeric"
-            maxLength={4}
-            value={nyttPin}
-            placeholder="Ny 4-sifret PIN"
-            onChange={e => { setNyttPin(e.target.value); setPinMelding('') }}
-            onKeyDown={e => e.key === 'Enter' && byttPin()}
-          />
-          <button className="fp-handling-btn" onClick={byttPin}>Lagre</button>
-        </div>
-        {pinMelding && (
-          <p className={`fp-pin-melding${pinMelding.startsWith('Feil') ? ' fp-pin-melding--feil' : ''}`}>
-            {pinMelding}
-          </p>
-        )}
-      </div>
-
       {/* Nullstill */}
       <button className="btn fp-nullstill-btn" onClick={() => setVisNullstill(true)}>
         🗑 Nullstill progresjon
       </button>
 
-      <div className={`fp-bekreft-overlay${visNullstill ? ' active' : ''}`}>
-        <div className="fp-bekreft-kort">
-          <p className="fp-bekreft-tekst">Er du sikker? Dette vil slette all fremgang.</p>
-          <div className="fp-bekreft-knapper">
-            <button className="btn fp-bekreft-avbryt" onClick={() => setVisNullstill(false)}>Avbryt</button>
-            <button className="btn fp-bekreft-ok" onClick={bekreftNullstill}>Slett alt</button>
+      <div className={`dialog-overlay${visNullstill ? ' active' : ''}`}>
+        <div className="dialog-kort">
+          <p className="dialog-tekst">Er du sikker? Dette vil slette all fremgang.</p>
+          <div className="dialog-knapper">
+            <button className="btn dialog-avbryt" onClick={() => setVisNullstill(false)}>Avbryt</button>
+            <button className="btn dialog-slett" onClick={() => { nullstillProgresjon(); setVisNullstill(false) }}>Slett alt</button>
           </div>
         </div>
       </div>
     </div>
   )
-}
-
-function Foreldre() {
-  const [loggetInn, setLoggetInn] = useState(false)
-  return loggetInn
-    ? <Dashboard onLoggUt={() => setLoggetInn(false)} />
-    : <PinInnlogging onSuksess={() => setLoggetInn(true)} />
 }
 
 export default Foreldre

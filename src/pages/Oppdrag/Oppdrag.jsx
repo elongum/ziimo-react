@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import './Oppdrag.css'
 import { useZiimo } from '../../context/ZiimoContext'
+import { spillFullfortLyd } from '../../utils/lyd'
 
 const MELDINGER = [
   "Hei! Jeg er Ziimo! Jeg har reist langt for å utforske verden sammen med deg! 🚀",
@@ -42,6 +43,7 @@ function Oppdrag() {
   function handleFullfort() {
     if (!gjeldende) return
     toggleFullfort(gjeldende.id)
+    spillFullfortLyd()
     setFeirer(true)
     setTimeout(() => setFeirer(false), 1200)
     setStartett(false)

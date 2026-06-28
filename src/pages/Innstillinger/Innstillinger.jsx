@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Innstillinger.css'
 import { useZiimo } from '../../context/ZiimoContext'
+import { useAuth } from '../../context/AuthContext'
 
 function ToggleSwitch({ id, sjekket, onChange, label }) {
   return (
@@ -14,25 +15,34 @@ function ToggleSwitch({ id, sjekket, onChange, label }) {
 
 function Innstillinger() {
   const { slettAlleData } = useZiimo()
+  const { erInnlogget, loggUt } = useAuth()
   const navigate = useNavigate()
 
   const [moerktTema, setMoerktTema] = useState(
-    () => localStorage.getItem('ziimo-dark-mode') === 'true'
+    () => localStorage.getItem('ziimo-theme') === 'dark'
   )
   const [lydeffekter, setLydeffekter] = useState(
-    () => localStorage.getItem('ziimo-sound') !== 'false'
+    () => localStorage.getItem('ziimo-sound') !== 'off'
   )
   const [personvernApen, setPersonvernApen] = useState(false)
   const [visSlettDialog,  setVisSlettDialog]  = useState(false)
 
   function handleMoerktTema(e) {
-    setMoerktTema(e.target.checked)
-    localStorage.setItem('ziimo-dark-mode', e.target.checked)
+    const dark = e.target.checked
+    setMoerktTema(dark)
+    if (dark) {
+      document.documentElement.setAttribute('data-theme', 'dark')
+      localStorage.setItem('ziimo-theme', 'dark')
+    } else {
+      document.documentElement.removeAttribute('data-theme')
+      localStorage.setItem('ziimo-theme', 'light')
+    }
   }
 
   function handleLydeffekter(e) {
-    setLydeffekter(e.target.checked)
-    localStorage.setItem('ziimo-sound', e.target.checked)
+    const paa = e.target.checked
+    setLydeffekter(paa)
+    localStorage.setItem('ziimo-sound', paa ? 'on' : 'off')
   }
 
   function bekreftSlettAlleData() {
@@ -107,17 +117,29 @@ function Innstillinger() {
         </button>
       </div>
 
+      {erInnlogget && (
+        <div className="innstillinger-seksjon">
+          <span className="innstillinger-seksjon-tittel">Konto</span>
+          <button
+            className="innstillinger-rad innstillinger-rad-fare"
+            onClick={() => { loggUt(); navigate('/login', { replace: true }) }}
+          >
+            <span>🚪 Logg ut av foreldrekonto</span>
+          </button>
+        </div>
+      )}
+
       {/* Bekreftelsesdialog */}
-      <div className={`innstillinger-overlay${visSlettDialog ? ' active' : ''}`}>
-        <div className="innstillinger-dialog">
-          <p className="innstillinger-dialog-tekst">
+      <div className={`dialog-overlay${visSlettDialog ? ' active' : ''}`}>
+        <div className="dialog-kort">
+          <p className="dialog-tekst">
             Er du sikker? Dette sletter <strong>all</strong> data, inkludert navn, belønninger og fremgang.
           </p>
-          <div className="innstillinger-dialog-knapper">
-            <button className="btn innstillinger-avbryt-btn" onClick={() => setVisSlettDialog(false)}>
+          <div className="dialog-knapper">
+            <button className="btn dialog-avbryt" onClick={() => setVisSlettDialog(false)}>
               Avbryt
             </button>
-            <button className="btn innstillinger-slett-btn" onClick={bekreftSlettAlleData}>
+            <button className="btn dialog-slett" onClick={bekreftSlettAlleData}>
               Slett alt
             </button>
           </div>

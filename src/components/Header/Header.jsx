@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useZiimo } from '../../context/ZiimoContext'
+import { useAuth } from '../../context/AuthContext'
 import './Header.css'
 
 const DAGER   = ['søndag', 'mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag']
@@ -22,16 +23,19 @@ const MENY_PUNKTER = [
 function Header() {
   const [menuApen, setMenuApen] = useState(false)
   const { totalePoeng } = useZiimo()
-  const navigate = useNavigate()
-  const { pathname } = useLocation()
+  const { bruker }      = useAuth()
+  const navigate        = useNavigate()
+  const { pathname }    = useLocation()
 
   function naviger(til) {
     setMenuApen(false)
     navigate(til)
   }
 
-  const erHjem     = pathname === '/'
-  const erOppdrag  = pathname === '/oppdrag'
+  const erHjem           = pathname === '/'
+  const erOppdrag        = pathname === '/oppdrag'
+  const erForeldreSide   = pathname === '/foreldre' || pathname === '/innstillinger'
+  const erLogin          = pathname === '/login'
 
   return (
     <>
@@ -49,17 +53,25 @@ function Header() {
               <span className="poeng-chip-etikett">poeng</span>
             </div>
           )}
+          {erForeldreSide && bruker && (
+            <div className="bruker-chip">
+              <span className="bruker-chip-ikon">👤</span>
+              <span className="bruker-chip-navn">{bruker.navn}</span>
+            </div>
+          )}
 
-          <button
-            className={`hamburger-btn${menuApen ? ' is-open' : ''}`}
-            onClick={() => setMenuApen(v => !v)}
-            aria-label="Meny"
-            aria-expanded={menuApen}
-          >
-            <span className="hb-line" />
-            <span className="hb-line" />
-            <span className="hb-line" />
-          </button>
+          {!erLogin && (
+            <button
+              className={`hamburger-btn${menuApen ? ' is-open' : ''}`}
+              onClick={() => setMenuApen(v => !v)}
+              aria-label="Meny"
+              aria-expanded={menuApen}
+            >
+              <span className="hb-line" />
+              <span className="hb-line" />
+              <span className="hb-line" />
+            </button>
+          )}
         </div>
       </header>
 

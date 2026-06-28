@@ -14,12 +14,35 @@
   --shadow-green-btn: rgba(130, 163, 108, 0.45);
   --shadow-green-btn-hover: rgba(130, 163, 108, 0.55);
 
+  --color-danger: #E05555;
+  --color-danger-hover: #C04040;
+
   --radius-pill: 999px;
   --radius-lg: 28px;
   --radius-md: 18px;
 
   --font-heading: 'Baloo 2', system-ui, sans-serif;
   --font-body: 'Nunito', system-ui, sans-serif;
+}
+
+/* ── Mørkt tema ──────────────────────────────── */
+html[data-theme="dark"] {
+  --ziimo-green:       #9EC87E;
+  --ziimo-green-dark:  #7aaa5a;
+  --ziimo-green-light: #4A6840;
+  --ziimo-cream:       #1B2714;
+  --bg-white:          #253318;
+  --text:              #D6ECC0;
+  --text-soft:         #8DB87A;
+  --shadow-green:      rgba(60, 100, 40, 0.45);
+  --color-black:       #D6ECC0;
+}
+
+html[data-theme="dark"] body {
+  background-color: var(--ziimo-cream);
+  background-image:
+    radial-gradient(ellipse at 15% 85%, rgba(50, 80, 30, 0.55) 0%, transparent 48%),
+    radial-gradient(ellipse at 85% 10%, rgba(30, 50, 18, 0.9)  0%, transparent 45%);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -249,3 +272,60 @@ p  { margin: 0; }
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ── Delt dialog-overlay ─────────────────────── */
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 810;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.dialog-overlay.active { opacity: 1; pointer-events: all; }
+
+.dialog-kort {
+  background: var(--bg-white);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  width: 100%;
+  max-width: 340px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+  animation: dialog-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes dialog-pop {
+  from { transform: scale(0.4) rotate(-4deg); opacity: 0; }
+  to   { transform: scale(1)   rotate(0deg);  opacity: 1; }
+}
+.dialog-tekst {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+.dialog-knapper { display: flex; gap: 10px; }
+
+.dialog-avbryt {
+  flex: 1;
+  background: var(--ziimo-cream);
+  color: var(--text);
+  border: 2.5px solid var(--ziimo-green-light);
+}
+.dialog-avbryt:hover { background: var(--ziimo-green-light); }
+
+.dialog-slett {
+  flex: 1;
+  background: var(--color-danger);
+  color: var(--bg-white);
+  box-shadow: 0 3px 12px rgba(224, 85, 85, 0.3);
+}
+.dialog-slett:hover { background: var(--color-danger-hover); }

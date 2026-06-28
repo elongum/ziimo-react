@@ -59,7 +59,9 @@ export function ZiimoProvider({ children }) {
   useEffect(() => { localStorage.setItem('ziimo-belonninger', JSON.stringify(belonninger))   }, [belonninger])
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/oppdrag')
+    const controller = new AbortController()
+
+    fetch('http://localhost:3001/api/oppdrag', { signal: controller.signal })
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         return res.json()
@@ -71,9 +73,13 @@ export function ZiimoProvider({ children }) {
           return [...apiOppdrag, ...brukerOppdrag]
         })
       })
-      .catch(() => {
-        // API ikke tilgjengelig – beholder nåværende state (localStorage eller hardkodet liste)
+      .catch(err => {
+        if (err.name !== 'AbortError') {
+          console.warn('API ikke tilgjengelig – bruker lokal oppdragsliste:', err.message)
+        }
       })
+
+    return () => controller.abort()
   }, [])
 
   const toggleFullfort = useCallback((id) => {
