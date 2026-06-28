@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "node --watch index.js"
+    "dev": "node --watch index.js",
+    "db:reset": "rm -f db/*.db db/*.db-shm db/*.db-wal && echo 'Database slettet – kjør start for å opprette på nytt'"
   },
   "keywords": [],
   "author": "",

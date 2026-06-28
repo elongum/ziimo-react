@@ -1,6 +1,9 @@
 import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react'
+import { useAuth } from './AuthContext'
 
 const ZiimoContext = createContext(null)
+
+const API = 'http://localhost:3001/api'
 
 const startOppdrag = [
   { id: 1, tittel: "Rydd rommet ditt",       poeng: 10, ikon: "🧹", varighet: "Medium", sted: "Inne", kategori: "fysisk",      beskrivelse: "Rydd og rens rommet ditt slik at det ser fint og ryddig ut. Legg alt på plass!" },
@@ -17,7 +20,22 @@ function slaSammen(lagret) {
   })
 }
 
+// Rekonstruerer ukentligData fra API-respons
+function byggUkentligData(progresjonRader) {
+  const ukentlig = {}
+  progresjonRader.forEach(({ fullfort_dato }) => {
+    ukentlig[fullfort_dato] = (ukentlig[fullfort_dato] ?? 0) + 1
+  })
+  return ukentlig
+}
+
+function authHeaders(token) {
+  return { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
+}
+
 export function ZiimoProvider({ children }) {
+  const { token, loggUt } = useAuth()
+
   const [oppdragListe, setOppdragListe] = useState(() => {
     try {
       const lagret = localStorage.getItem('ziimo-oppdrag')
@@ -39,10 +57,7 @@ export function ZiimoProvider({ children }) {
     } catch { return {} }
   })
 
-  const [barnNavn, setBarnNavn] = useState(() =>
-    localStorage.getItem('ziimo-barnnavn') ?? ''
-  )
-
+  const [barnNavn, setBarnNavn]       = useState(() => localStorage.getItem('ziimo-barnnavn') ?? '')
   const [belonninger, setBelonninger] = useState(() => {
     try {
       const lagret = localStorage.getItem('ziimo-belonninger')
@@ -52,39 +67,57 @@ export function ZiimoProvider({ children }) {
 
   const [filter, setFilter] = useState('alle')
 
-  useEffect(() => { localStorage.setItem('ziimo-oppdrag',    JSON.stringify(oppdragListe))   }, [oppdragListe])
-  useEffect(() => { localStorage.setItem('ziimo-fullforte',  JSON.stringify([...fullforteIds])) }, [fullforteIds])
-  useEffect(() => { localStorage.setItem('ziimo-ukentlig',   JSON.stringify(ukentligData))   }, [ukentligData])
-  useEffect(() => { localStorage.setItem('ziimo-barnnavn',   barnNavn)                       }, [barnNavn])
-  useEffect(() => { localStorage.setItem('ziimo-belonninger', JSON.stringify(belonninger))   }, [belonninger])
+  // ── Persistering til localStorage ─────────────
+  useEffect(() => { localStorage.setItem('ziimo-oppdrag',     JSON.stringify(oppdragListe))    }, [oppdragListe])
+  useEffect(() => { localStorage.setItem('ziimo-fullforte',   JSON.stringify([...fullforteIds])) }, [fullforteIds])
+  useEffect(() => { localStorage.setItem('ziimo-ukentlig',    JSON.stringify(ukentligData))    }, [ukentligData])
+  useEffect(() => { localStorage.setItem('ziimo-barnnavn',    barnNavn)                        }, [barnNavn])
+  useEffect(() => { localStorage.setItem('ziimo-belonninger', JSON.stringify(belonninger))     }, [belonninger])
 
+  // ── Hent oppdragsliste fra API ─────────────────
   useEffect(() => {
     const controller = new AbortController()
-
-    fetch('http://localhost:3001/api/oppdrag', { signal: controller.signal })
-      .then(res => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        return res.json()
-      })
+    fetch(`${API}/oppdrag`, { signal: controller.signal })
+      .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json() })
       .then(apiOppdrag => {
         setOppdragListe(prev => {
           const apiIds = new Set(apiOppdrag.map(o => o.id))
-          const brukerOppdrag = prev.filter(o => !apiIds.has(o.id))
-          return [...apiOppdrag, ...brukerOppdrag]
+          return [...apiOppdrag, ...prev.filter(o => !apiIds.has(o.id))]
         })
       })
-      .catch(err => {
-        if (err.name !== 'AbortError') {
-          console.warn('API ikke tilgjengelig – bruker lokal oppdragsliste:', err.message)
-        }
-      })
-
+      .catch(err => { if (err.name !== 'AbortError') console.warn('Oppdrag API utilgjengelig:', err.message) })
     return () => controller.abort()
   }, [])
 
+  // ── Hent progresjon fra API ved innlogging ─────
+  useEffect(() => {
+    if (!token) return
+    const controller = new AbortController()
+
+    fetch(`${API}/progresjon`, { headers: authHeaders(token), signal: controller.signal })
+      .then(res => {
+        if (res.status === 401) { loggUt(); return null }
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        return res.json()
+      })
+      .then(rader => {
+        if (!rader) return
+        const ids      = new Set(rader.map(r => r.oppdrag_id))
+        const ukentlig = byggUkentligData(rader)
+        setFullforteIds(ids)
+        setUkentligData(ukentlig)
+      })
+      .catch(err => { if (err.name !== 'AbortError') console.warn('Progresjon API utilgjengelig:', err.message) })
+
+    return () => controller.abort()
+  }, [token, loggUt])
+
+  // ── Toggle fullført – optimistisk + API-sync ───
   const toggleFullfort = useCallback((id) => {
-    const iDag = new Date().toISOString().slice(0, 10)
+    const iDag        = new Date().toISOString().slice(0, 10)
     const blerFullfort = !fullforteIds.has(id)
+
+    // Optimistisk oppdatering
     setFullforteIds(prev => {
       const neste = new Set(prev)
       blerFullfort ? neste.add(id) : neste.delete(id)
@@ -94,7 +127,32 @@ export function ZiimoProvider({ children }) {
       ...prev,
       [iDag]: Math.max(0, (prev[iDag] ?? 0) + (blerFullfort ? 1 : -1)),
     }))
-  }, [fullforteIds])
+
+    if (!token) return  // Kun localStorage for ikke-innloggede
+
+    const url    = blerFullfort ? `${API}/progresjon` : `${API}/progresjon/${id}`
+    const method = blerFullfort ? 'POST' : 'DELETE'
+    const body   = blerFullfort ? JSON.stringify({ oppdrag_id: id }) : undefined
+
+    fetch(url, { method, headers: authHeaders(token), body })
+      .then(res => {
+        if (res.status === 401) loggUt()
+        if (!res.ok && res.status !== 404) throw new Error(`HTTP ${res.status}`)
+      })
+      .catch(err => {
+        // Rull tilbake ved feil
+        console.warn('Progresjon-synk feilet, ruller tilbake:', err.message)
+        setFullforteIds(prev => {
+          const rull = new Set(prev)
+          blerFullfort ? rull.delete(id) : rull.add(id)
+          return rull
+        })
+        setUkentligData(prev => ({
+          ...prev,
+          [iDag]: Math.max(0, (prev[iDag] ?? 0) + (blerFullfort ? -1 : 1)),
+        }))
+      })
+  }, [fullforteIds, token, loggUt])
 
   const leggTilOppdrag = useCallback((tittel, poeng) => {
     setOppdragListe(prev => {
@@ -103,7 +161,7 @@ export function ZiimoProvider({ children }) {
     })
   }, [])
 
-  const lagreBarnNavn   = useCallback((navn)   => setBarnNavn(navn), [])
+  const lagreBarnNavn    = useCallback((navn)  => setBarnNavn(navn), [])
   const leggTilBelonning = useCallback((tekst) => setBelonninger(prev => [...prev, { id: Date.now(), tekst }]), [])
   const slettBelonning   = useCallback((id)    => setBelonninger(prev => prev.filter(b => b.id !== id)), [])
 
@@ -119,7 +177,7 @@ export function ZiimoProvider({ children }) {
     setBarnNavn('')
     setBelonninger([])
     ;['ziimo-oppdrag', 'ziimo-fullforte', 'ziimo-ukentlig',
-      'ziimo-barnnavn', 'ziimo-belonninger', 'ziimo-pin'].forEach(k => localStorage.removeItem(k))
+      'ziimo-barnnavn', 'ziimo-belonninger'].forEach(k => localStorage.removeItem(k))
   }, [])
 
   const antallUlaste = useMemo(() => {

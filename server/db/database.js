@@ -32,6 +32,14 @@ db.exec(`
     kategori      TEXT,
     beskrivelse   TEXT
   );
+
+  CREATE TABLE IF NOT EXISTS progresjon (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    bruker_id     INTEGER NOT NULL REFERENCES brukere(id)  ON DELETE CASCADE,
+    oppdrag_id    INTEGER NOT NULL REFERENCES oppdrag(id)  ON DELETE CASCADE,
+    fullfort_dato TEXT    NOT NULL DEFAULT (date('now')),
+    UNIQUE(bruker_id, oppdrag_id)
+  );
 `)
 
 // ── Seed – INSERT OR IGNORE kjører trygt ved hver restart ─

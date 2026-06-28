@@ -15,9 +15,10 @@ if (!process.env.JWT_SECRET || process.env.JWT_SECRET.startsWith('replace_this')
 // Initialiser databasen ved oppstart (oppretter tabeller + seed)
 require('./db/database')
 
-const healthRouter  = require('./routes/health')
-const authRouter    = require('./routes/auth')
-const oppdragRouter = require('./routes/oppdrag')
+const healthRouter     = require('./routes/health')
+const authRouter       = require('./routes/auth')
+const oppdragRouter    = require('./routes/oppdrag')
+const progresjonRouter = require('./routes/progresjon')
 
 const app  = express()
 const PORT = process.env.PORT || 3001
@@ -62,6 +63,7 @@ app.use('/api/auth', authLimiter)
 app.use('/api', healthRouter)
 app.use('/api', authRouter)
 app.use('/api', oppdragRouter)
+app.use('/api', progresjonRouter)
 
 // ── 404 ───────────────────────────────────────
 app.use((req, res) => {
