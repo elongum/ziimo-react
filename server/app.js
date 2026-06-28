@@ -13,8 +13,13 @@ const authRouter       = require('./routes/auth')
 const oppdragRouter    = require('./routes/oppdrag')
 const progresjonRouter = require('./routes/progresjon')
 
-const app         = express()
-const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:5173'
+const app = express()
+
+// Støtter kommaseparert liste: "https://ziimo.vercel.app,http://localhost:5173"
+const ALLOWED_ORIGINS = (process.env.CORS_ORIGIN || 'http://localhost:5173')
+  .split(',')
+  .map(o => o.trim())
+  .filter(Boolean)
 
 // Logg ikke under testing
 if (process.env.NODE_ENV !== 'test') {
@@ -24,7 +29,14 @@ if (process.env.NODE_ENV !== 'test') {
 
 app.use(helmet())
 app.use(cors({
-  origin: CORS_ORIGIN,
+  origin: (origin, callback) => {
+    // Tillat forespørsler uten Origin-header (Postman, curl, server-til-server)
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error(`CORS: origin ikke tillatt – ${origin}`))
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }))
