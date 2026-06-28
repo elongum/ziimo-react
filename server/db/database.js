@@ -1,14 +1,16 @@
 const Database = require('better-sqlite3')
 const path = require('path')
 
-const DB_PATH = process.env.DB_PATH
-  ? path.resolve(process.env.DB_PATH)
-  : path.join(__dirname, 'ziimo.db')
+const rawPath = process.env.DB_PATH || path.join(__dirname, 'ziimo.db')
+// ':memory:' er et SQLite-spesielt nøkkelord – ikke path.resolve() det
+const DB_PATH = rawPath === ':memory:' ? ':memory:' : path.resolve(rawPath)
 
 const db = new Database(DB_PATH)
 
-// Enable WAL mode for better concurrent read performance
-db.pragma('journal_mode = WAL')
+// WAL-modus krever filsystem – ikke støttet på :memory:
+if (DB_PATH !== ':memory:') {
+  db.pragma('journal_mode = WAL')
+}
 db.pragma('foreign_keys = ON')
 
 // ── Tabeller ───────────────────────────────────

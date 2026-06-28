@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
+    "test": "jest --runInBand",
     "db:reset": "rm -f db/*.db db/*.db-shm db/*.db-wal && echo 'Database slettet – kjør start for å opprette på nytt'"
   },
   "keywords": [],
@@ -22,5 +23,9 @@
     "helmet": "^8.2.0",
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.11.0"
+  },
+  "devDependencies": {
+    "jest": "^30.4.2",
+    "supertest": "^7.2.2"
   }
 }
