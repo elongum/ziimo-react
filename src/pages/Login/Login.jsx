@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Login.css'
 import { useAuth } from '../../context/AuthContext'
+import { API_BASE } from '../../utils/api'
 
-const API = 'http://localhost:3001/api/auth'
+const API = `${API_BASE}/auth`
 
 function Login() {
   const { loggInn } = useAuth()
@@ -115,7 +116,7 @@ function Login() {
                 type="password"
                 value={innPassord}
                 onChange={e => setInnPassord(e.target.value)}
-                placeholder="Minst 8 tegn"
+                placeholder="8–72 tegn"
                 autoComplete="current-password"
                 required
               />
@@ -158,7 +159,7 @@ function Login() {
                 type="password"
                 value={innPassord}
                 onChange={e => setInnPassord(e.target.value)}
-                placeholder="Minst 8 tegn"
+                placeholder="8–72 tegn"
                 autoComplete="new-password"
                 required
               />

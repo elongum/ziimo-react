@@ -1,9 +1,9 @@
 import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react'
 import { useAuth } from './AuthContext'
+import { API_BASE } from '../utils/api'
+import { SK } from '../utils/storage-keys'
 
 const ZiimoContext = createContext(null)
-
-const API = 'http://localhost:3001/api'
 
 const startOppdrag = [
   { id: 1, tittel: "Rydd rommet ditt",       poeng: 10, ikon: "🧹", varighet: "Medium", sted: "Inne", kategori: "fysisk",      beskrivelse: "Rydd og rens rommet ditt slik at det ser fint og ryddig ut. Legg alt på plass!" },
@@ -38,29 +38,29 @@ export function ZiimoProvider({ children }) {
 
   const [oppdragListe, setOppdragListe] = useState(() => {
     try {
-      const lagret = localStorage.getItem('ziimo-oppdrag')
+      const lagret = localStorage.getItem(SK.oppdrag)
       return lagret ? slaSammen(JSON.parse(lagret)) : startOppdrag
     } catch { return startOppdrag }
   })
 
   const [fullforteIds, setFullforteIds] = useState(() => {
     try {
-      const lagret = localStorage.getItem('ziimo-fullforte')
+      const lagret = localStorage.getItem(SK.fullforte)
       return lagret ? new Set(JSON.parse(lagret)) : new Set()
     } catch { return new Set() }
   })
 
   const [ukentligData, setUkentligData] = useState(() => {
     try {
-      const lagret = localStorage.getItem('ziimo-ukentlig')
+      const lagret = localStorage.getItem(SK.ukentlig)
       return lagret ? JSON.parse(lagret) : {}
     } catch { return {} }
   })
 
-  const [barnNavn, setBarnNavn]       = useState(() => localStorage.getItem('ziimo-barnnavn') ?? '')
+  const [barnNavn, setBarnNavn]       = useState(() => localStorage.getItem(SK.barnNavn) ?? '')
   const [belonninger, setBelonninger] = useState(() => {
     try {
-      const lagret = localStorage.getItem('ziimo-belonninger')
+      const lagret = localStorage.getItem(SK.belonninger)
       return lagret ? JSON.parse(lagret) : []
     } catch { return [] }
   })
@@ -68,16 +68,16 @@ export function ZiimoProvider({ children }) {
   const [filter, setFilter] = useState('alle')
 
   // ── Persistering til localStorage ─────────────
-  useEffect(() => { localStorage.setItem('ziimo-oppdrag',     JSON.stringify(oppdragListe))    }, [oppdragListe])
-  useEffect(() => { localStorage.setItem('ziimo-fullforte',   JSON.stringify([...fullforteIds])) }, [fullforteIds])
-  useEffect(() => { localStorage.setItem('ziimo-ukentlig',    JSON.stringify(ukentligData))    }, [ukentligData])
-  useEffect(() => { localStorage.setItem('ziimo-barnnavn',    barnNavn)                        }, [barnNavn])
-  useEffect(() => { localStorage.setItem('ziimo-belonninger', JSON.stringify(belonninger))     }, [belonninger])
+  useEffect(() => { localStorage.setItem(SK.oppdrag,     JSON.stringify(oppdragListe))    }, [oppdragListe])
+  useEffect(() => { localStorage.setItem(SK.fullforte,   JSON.stringify([...fullforteIds])) }, [fullforteIds])
+  useEffect(() => { localStorage.setItem(SK.ukentlig,    JSON.stringify(ukentligData))    }, [ukentligData])
+  useEffect(() => { localStorage.setItem(SK.barnNavn,    barnNavn)                        }, [barnNavn])
+  useEffect(() => { localStorage.setItem(SK.belonninger, JSON.stringify(belonninger))     }, [belonninger])
 
   // ── Hent oppdragsliste fra API ─────────────────
   useEffect(() => {
     const controller = new AbortController()
-    fetch(`${API}/oppdrag`, { signal: controller.signal })
+    fetch(`${API_BASE}/oppdrag`, { signal: controller.signal })
       .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json() })
       .then(apiOppdrag => {
         setOppdragListe(prev => {
@@ -94,7 +94,7 @@ export function ZiimoProvider({ children }) {
     if (!token) return
     const controller = new AbortController()
 
-    fetch(`${API}/progresjon`, { headers: authHeaders(token), signal: controller.signal })
+    fetch(`${API_BASE}/progresjon`, { headers: authHeaders(token), signal: controller.signal })
       .then(res => {
         if (res.status === 401) { loggUt(); return null }
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
@@ -130,9 +130,9 @@ export function ZiimoProvider({ children }) {
 
     if (!token) return  // Kun localStorage for ikke-innloggede
 
-    const url    = blerFullfort ? `${API}/progresjon` : `${API}/progresjon/${id}`
+    const url    = blerFullfort ? `${API_BASE}/progresjon` : `${API_BASE}/progresjon/${id}`
     const method = blerFullfort ? 'POST' : 'DELETE'
-    const body   = blerFullfort ? JSON.stringify({ oppdrag_id: id }) : undefined
+    const body   = blerFullfort ? JSON.stringify({ oppdrag_id: id, fullfort_dato: iDag }) : undefined
 
     fetch(url, { method, headers: authHeaders(token), body })
       .then(res => {
@@ -176,8 +176,8 @@ export function ZiimoProvider({ children }) {
     setUkentligData({})
     setBarnNavn('')
     setBelonninger([])
-    ;['ziimo-oppdrag', 'ziimo-fullforte', 'ziimo-ukentlig',
-      'ziimo-barnnavn', 'ziimo-belonninger'].forEach(k => localStorage.removeItem(k))
+    ;[SK.oppdrag, SK.fullforte, SK.ukentlig, SK.barnNavn, SK.belonninger]
+      .forEach(k => localStorage.removeItem(k))
   }, [])
 
   const antallUlaste = useMemo(() => {

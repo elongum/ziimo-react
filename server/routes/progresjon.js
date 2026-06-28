@@ -1,7 +1,9 @@
-const express    = require('express')
-const router     = express.Router()
-const db         = require('../db/database')
+const express     = require('express')
+const router      = express.Router()
+const db          = require('../db/database')
 const requireAuth = require('../middleware/auth')
+
+const DATO_REGEX = /^\d{4}-\d{2}-\d{2}$/
 
 // Prepared statements – lages én gang ved moduloppstart
 const stmts = {
@@ -13,7 +15,7 @@ const stmts = {
   `),
   settFullfort: db.prepare(`
     INSERT OR IGNORE INTO progresjon (bruker_id, oppdrag_id, fullfort_dato)
-    VALUES (?, ?, date('now'))
+    VALUES (?, ?, ?)
   `),
   fjernFullfort: db.prepare(`
     DELETE FROM progresjon
@@ -26,13 +28,14 @@ const stmts = {
 
 // ── GET /api/progresjon ────────────────────────
 router.get('/progresjon', requireAuth, (req, res) => {
-  const rader = stmts.hentAlle.all(req.bruker.id)
-  res.json(rader)
+  res.json(stmts.hentAlle.all(req.bruker.id))
 })
 
 // ── POST /api/progresjon ───────────────────────
 router.post('/progresjon', requireAuth, (req, res) => {
-  const oppdragId = Number(req.body?.oppdrag_id)
+  const oppdragId    = Number(req.body?.oppdrag_id)
+  const klientDato   = req.body?.fullfort_dato
+  const serverDato   = new Date().toISOString().slice(0, 10)
 
   if (!Number.isInteger(oppdragId) || oppdragId < 1) {
     return res.status(400).json({ error: 'Ugyldig oppdrag_id.' })
@@ -41,7 +44,10 @@ router.post('/progresjon', requireAuth, (req, res) => {
     return res.status(404).json({ error: 'Oppdrag ikke funnet.' })
   }
 
-  stmts.settFullfort.run(req.bruker.id, oppdragId)
+  // Bruk klientens dato hvis den er gyldig ISO-dato, ellers serverens dato
+  const dato = (klientDato && DATO_REGEX.test(klientDato)) ? klientDato : serverDato
+
+  stmts.settFullfort.run(req.bruker.id, oppdragId, dato)
 
   const rad = stmts.hentAlle.all(req.bruker.id)
     .find(r => r.oppdrag_id === oppdragId)

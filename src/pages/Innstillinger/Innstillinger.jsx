@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import './Innstillinger.css'
 import { useZiimo } from '../../context/ZiimoContext'
 import { useAuth } from '../../context/AuthContext'
+import { SK } from '../../utils/storage-keys'
 
 function ToggleSwitch({ id, sjekket, onChange, label }) {
   return (
@@ -19,10 +20,10 @@ function Innstillinger() {
   const navigate = useNavigate()
 
   const [moerktTema, setMoerktTema] = useState(
-    () => localStorage.getItem('ziimo-theme') === 'dark'
+    () => localStorage.getItem(SK.theme) === 'dark'
   )
   const [lydeffekter, setLydeffekter] = useState(
-    () => localStorage.getItem('ziimo-sound') !== 'off'
+    () => localStorage.getItem(SK.sound) !== 'off'
   )
   const [personvernApen, setPersonvernApen] = useState(false)
   const [visSlettDialog,  setVisSlettDialog]  = useState(false)
@@ -32,17 +33,17 @@ function Innstillinger() {
     setMoerktTema(dark)
     if (dark) {
       document.documentElement.setAttribute('data-theme', 'dark')
-      localStorage.setItem('ziimo-theme', 'dark')
+      localStorage.setItem(SK.theme, 'dark')
     } else {
       document.documentElement.removeAttribute('data-theme')
-      localStorage.setItem('ziimo-theme', 'light')
+      localStorage.setItem(SK.theme, 'light')
     }
   }
 
   function handleLydeffekter(e) {
     const paa = e.target.checked
     setLydeffekter(paa)
-    localStorage.setItem('ziimo-sound', paa ? 'on' : 'off')
+    localStorage.setItem(SK.sound, paa ? 'on' : 'off')
   }
 
   function bekreftSlettAlleData() {
