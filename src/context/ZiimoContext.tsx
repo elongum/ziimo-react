@@ -1,11 +1,54 @@
-import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect, useMemo, useCallback, ReactNode } from 'react'
 import { useAuth } from './AuthContext'
 import { API_BASE } from '../utils/api'
 import { SK } from '../utils/storage-keys'
 
-const ZiimoContext = createContext(null)
+export interface Oppdrag {
+  id: number
+  tittel: string
+  poeng: number
+  ikon: string
+  varighet: string
+  sted: string
+  kategori: string
+  beskrivelse: string
+}
 
-const startOppdrag = [
+export interface Belonning {
+  id: number
+  tekst: string
+}
+
+interface ProgresjonRad {
+  oppdrag_id: number
+  fullfort_dato: string
+}
+
+interface ZiimoContextValue {
+  oppdragListe: Oppdrag[]
+  fullforteIds: Set<number>
+  lasteIds: Set<number>
+  antallUlaste: number
+  totalePoeng: number
+  visteListe: Oppdrag[]
+  dagensFullfort: number
+  ukentligData: Record<string, number>
+  filter: string
+  setFilter: (filter: string) => void
+  barnNavn: string
+  belonninger: Belonning[]
+  toggleFullfort: (id: number) => void
+  leggTilOppdrag: (tittel: string, poeng: number) => void
+  lagreBarnNavn: (navn: string) => void
+  leggTilBelonning: (tekst: string) => void
+  slettBelonning: (id: number) => void
+  nullstillProgresjon: () => void
+  slettAlleData: () => void
+}
+
+const ZiimoContext = createContext<ZiimoContextValue | null>(null)
+
+const startOppdrag: Oppdrag[] = [
   { id: 1, tittel: "Rydd rommet ditt",       poeng: 10, ikon: "🧹", varighet: "Medium", sted: "Inne", kategori: "fysisk",      beskrivelse: "Rydd og rens rommet ditt slik at det ser fint og ryddig ut. Legg alt på plass!" },
   { id: 2, tittel: "Hjelp til med middagen", poeng: 15, ikon: "🍳", varighet: "Medium", sted: "Inne", kategori: "sosial",      beskrivelse: "Hjelp de voksne med å lage middag eller dekke bordet. En ekte lagspiller!" },
   { id: 3, tittel: "Les en bok",             poeng: 20, ikon: "📚", varighet: "Lang",   sted: "Inne", kategori: "kreativitet", beskrivelse: "Sett deg ned og les en bok i minst 15 minutter. Hva handler den om?" },
@@ -13,55 +56,54 @@ const startOppdrag = [
   { id: 5, tittel: "Tegn noe kreativt",      poeng: 15, ikon: "🎨", varighet: "Medium", sted: "Inne", kategori: "kreativitet", beskrivelse: "Tegn eller mal noe du synes er fint. La fantasien fly helt fritt!" },
 ]
 
-function slaSammen(lagret) {
+function slaSammen(lagret: Oppdrag[]): Oppdrag[] {
   return lagret.map(o => {
     const start = startOppdrag.find(s => s.id === o.id)
     return start ? { ...start, ...o } : o
   })
 }
 
-// Rekonstruerer ukentligData fra API-respons
-function byggUkentligData(progresjonRader) {
-  const ukentlig = {}
+function byggUkentligData(progresjonRader: ProgresjonRad[]): Record<string, number> {
+  const ukentlig: Record<string, number> = {}
   progresjonRader.forEach(({ fullfort_dato }) => {
     ukentlig[fullfort_dato] = (ukentlig[fullfort_dato] ?? 0) + 1
   })
   return ukentlig
 }
 
-function authHeaders(token) {
+function authHeaders(token: string): Record<string, string> {
   return { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
 }
 
-export function ZiimoProvider({ children }) {
+export function ZiimoProvider({ children }: { children: ReactNode }) {
   const { token, loggUt } = useAuth()
 
-  const [oppdragListe, setOppdragListe] = useState(() => {
+  const [oppdragListe, setOppdragListe] = useState<Oppdrag[]>(() => {
     try {
       const lagret = localStorage.getItem(SK.oppdrag)
-      return lagret ? slaSammen(JSON.parse(lagret)) : startOppdrag
+      return lagret ? slaSammen(JSON.parse(lagret) as Oppdrag[]) : startOppdrag
     } catch { return startOppdrag }
   })
 
-  const [fullforteIds, setFullforteIds] = useState(() => {
+  const [fullforteIds, setFullforteIds] = useState<Set<number>>(() => {
     try {
       const lagret = localStorage.getItem(SK.fullforte)
-      return lagret ? new Set(JSON.parse(lagret)) : new Set()
+      return lagret ? new Set<number>(JSON.parse(lagret) as number[]) : new Set()
     } catch { return new Set() }
   })
 
-  const [ukentligData, setUkentligData] = useState(() => {
+  const [ukentligData, setUkentligData] = useState<Record<string, number>>(() => {
     try {
       const lagret = localStorage.getItem(SK.ukentlig)
-      return lagret ? JSON.parse(lagret) : {}
+      return lagret ? JSON.parse(lagret) as Record<string, number> : {}
     } catch { return {} }
   })
 
-  const [barnNavn, setBarnNavn]       = useState(() => localStorage.getItem(SK.barnNavn) ?? '')
-  const [belonninger, setBelonninger] = useState(() => {
+  const [barnNavn, setBarnNavn]       = useState<string>(() => localStorage.getItem(SK.barnNavn) ?? '')
+  const [belonninger, setBelonninger] = useState<Belonning[]>(() => {
     try {
       const lagret = localStorage.getItem(SK.belonninger)
-      return lagret ? JSON.parse(lagret) : []
+      return lagret ? JSON.parse(lagret) as Belonning[] : []
     } catch { return [] }
   })
 
@@ -78,14 +120,14 @@ export function ZiimoProvider({ children }) {
   useEffect(() => {
     const controller = new AbortController()
     fetch(`${API_BASE}/oppdrag`, { signal: controller.signal })
-      .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json() })
+      .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json() as Promise<Oppdrag[]> })
       .then(apiOppdrag => {
         setOppdragListe(prev => {
           const apiIds = new Set(apiOppdrag.map(o => o.id))
           return [...apiOppdrag, ...prev.filter(o => !apiIds.has(o.id))]
         })
       })
-      .catch(err => { if (err.name !== 'AbortError') console.warn('Oppdrag API utilgjengelig:', err.message) })
+      .catch(err => { if ((err as Error).name !== 'AbortError') console.warn('Oppdrag API utilgjengelig:', (err as Error).message) })
     return () => controller.abort()
   }, [])
 
@@ -98,7 +140,7 @@ export function ZiimoProvider({ children }) {
       .then(res => {
         if (res.status === 401) { loggUt(); return null }
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        return res.json()
+        return res.json() as Promise<ProgresjonRad[]>
       })
       .then(rader => {
         if (!rader) return
@@ -107,13 +149,13 @@ export function ZiimoProvider({ children }) {
         setFullforteIds(ids)
         setUkentligData(ukentlig)
       })
-      .catch(err => { if (err.name !== 'AbortError') console.warn('Progresjon API utilgjengelig:', err.message) })
+      .catch(err => { if ((err as Error).name !== 'AbortError') console.warn('Progresjon API utilgjengelig:', (err as Error).message) })
 
     return () => controller.abort()
   }, [token, loggUt])
 
   // ── Toggle fullført – optimistisk + API-sync ───
-  const toggleFullfort = useCallback((id) => {
+  const toggleFullfort = useCallback((id: number) => {
     const iDag        = new Date().toISOString().slice(0, 10)
     const blerFullfort = !fullforteIds.has(id)
 
@@ -141,7 +183,7 @@ export function ZiimoProvider({ children }) {
       })
       .catch(err => {
         // Rull tilbake ved feil
-        console.warn('Progresjon-synk feilet, ruller tilbake:', err.message)
+        console.warn('Progresjon-synk feilet, ruller tilbake:', (err as Error).message)
         setFullforteIds(prev => {
           const rull = new Set(prev)
           blerFullfort ? rull.delete(id) : rull.add(id)
@@ -154,16 +196,16 @@ export function ZiimoProvider({ children }) {
       })
   }, [fullforteIds, token, loggUt])
 
-  const leggTilOppdrag = useCallback((tittel, poeng) => {
+  const leggTilOppdrag = useCallback((tittel: string, poeng: number) => {
     setOppdragListe(prev => {
       const nyId = prev.length > 0 ? Math.max(...prev.map(o => o.id)) + 1 : 1
       return [...prev, { id: nyId, tittel, poeng, ikon: '⭐', varighet: 'Medium', sted: 'Inne', kategori: 'fysisk', beskrivelse: tittel }]
     })
   }, [])
 
-  const lagreBarnNavn    = useCallback((navn)  => setBarnNavn(navn), [])
-  const leggTilBelonning = useCallback((tekst) => setBelonninger(prev => [...prev, { id: Date.now(), tekst }]), [])
-  const slettBelonning   = useCallback((id)    => setBelonninger(prev => prev.filter(b => b.id !== id)), [])
+  const lagreBarnNavn    = useCallback((navn: string)  => setBarnNavn(navn), [])
+  const leggTilBelonning = useCallback((tekst: string) => setBelonninger(prev => [...prev, { id: Date.now(), tekst }]), [])
+  const slettBelonning   = useCallback((id: number)    => setBelonninger(prev => prev.filter(b => b.id !== id)), [])
 
   const nullstillProgresjon = useCallback(() => {
     setFullforteIds(new Set())
@@ -225,7 +267,7 @@ export function ZiimoProvider({ children }) {
   )
 }
 
-export function useZiimo() {
+export function useZiimo(): ZiimoContextValue {
   const ctx = useContext(ZiimoContext)
   if (!ctx) throw new Error('useZiimo må brukes innenfor ZiimoProvider')
   return ctx

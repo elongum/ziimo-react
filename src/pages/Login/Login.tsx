@@ -2,15 +2,22 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Login.css'
 import { useAuth } from '../../context/AuthContext'
+import { Bruker } from '../../context/AuthContext'
 import { API_BASE } from '../../utils/api'
 
 const API = `${API_BASE}/auth`
+
+interface LoginApiResponse {
+  token: string
+  bruker: Bruker
+  error?: string
+}
 
 function Login() {
   const { loggInn } = useAuth()
   const navigate    = useNavigate()
 
-  const [aktifTab,  setAktifTab]  = useState('logginn')
+  const [aktifTab,  setAktifTab]  = useState<'logginn' | 'registrer'>('logginn')
   const [laster,    setLaster]    = useState(false)
   const [feil,      setFeil]      = useState('')
 
@@ -18,12 +25,12 @@ function Login() {
   const [innEpost,  setInnEpost]  = useState('')
   const [innPassord, setInnPassord] = useState('')
 
-  function byttTab(tab) {
+  function byttTab(tab: 'logginn' | 'registrer') {
     setAktifTab(tab)
     setFeil('')
   }
 
-  async function handleLoggInn(e) {
+  async function handleLoggInn(e: React.FormEvent) {
     e.preventDefault()
     setFeil('')
     setLaster(true)
@@ -33,7 +40,7 @@ function Login() {
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ epost: innEpost, passord: innPassord }),
       })
-      const data = await res.json()
+      const data = await res.json() as LoginApiResponse
       if (!res.ok) { setFeil(data.error || 'Noe gikk galt.'); return }
       loggInn(data.token, data.bruker)
       navigate('/foreldre', { replace: true })
@@ -44,7 +51,7 @@ function Login() {
     }
   }
 
-  async function handleRegistrer(e) {
+  async function handleRegistrer(e: React.FormEvent) {
     e.preventDefault()
     setFeil('')
     setLaster(true)
@@ -54,7 +61,7 @@ function Login() {
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ navn: innNavn, epost: innEpost, passord: innPassord }),
       })
-      const regData = await regRes.json()
+      const regData = await regRes.json() as { error?: string }
       if (!regRes.ok) { setFeil(regData.error || 'Noe gikk galt.'); return }
 
       const loginRes = await fetch(`${API}/login`, {
@@ -62,7 +69,7 @@ function Login() {
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ epost: innEpost, passord: innPassord }),
       })
-      const loginData = await loginRes.json()
+      const loginData = await loginRes.json() as LoginApiResponse
       if (!loginRes.ok) { setAktifTab('logginn'); return }
       loggInn(loginData.token, loginData.bruker)
       navigate('/foreldre', { replace: true })

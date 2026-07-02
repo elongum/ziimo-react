@@ -1,10 +1,16 @@
 import { SK } from './storage-keys'
 
-export function lydErPaa() {
+declare global {
+  interface Window {
+    webkitAudioContext?: typeof AudioContext
+  }
+}
+
+export function lydErPaa(): boolean {
   return localStorage.getItem(SK.sound) !== 'off'
 }
 
-export function spillFullfortLyd() {
+export function spillFullfortLyd(): void {
   if (!lydErPaa()) return
 
   const AudioCtx = window.AudioContext || window.webkitAudioContext

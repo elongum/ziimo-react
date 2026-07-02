@@ -7,12 +7,18 @@ import './Header.css'
 const DAGER   = ['søndag', 'mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag']
 const MANEDER = ['jan', 'feb', 'mar', 'apr', 'mai', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'des']
 
-function formaterDato() {
+function formaterDato(): string {
   const d = new Date()
   return `${DAGER[d.getDay()]}. ${d.getDate()}. ${MANEDER[d.getMonth()]}`
 }
 
-const MENY_PUNKTER = [
+interface MenyPunkt {
+  ikon: string
+  label: string
+  til: string
+}
+
+const MENY_PUNKTER: (MenyPunkt | null)[] = [
   { ikon: '🏠', label: 'Hjem',          til: '/' },
   { ikon: '🎯', label: 'Oppdrag',       til: '/oppdrag' },
   null,
@@ -27,7 +33,7 @@ function Header() {
   const navigate        = useNavigate()
   const { pathname }    = useLocation()
 
-  function naviger(til) {
+  function naviger(til: string) {
     setMenuApen(false)
     navigate(til)
   }

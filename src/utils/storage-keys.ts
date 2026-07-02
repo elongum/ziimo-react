@@ -8,4 +8,4 @@ export const SK = {
   bruker:      'ziimo-bruker',
   theme:       'ziimo-theme',
   sound:       'ziimo-sound',
-}
+} as const

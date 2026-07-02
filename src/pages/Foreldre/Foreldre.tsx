@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, ChangeEvent, KeyboardEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Foreldre.css'
 import { useZiimo } from '../../context/ZiimoContext'
@@ -70,8 +70,8 @@ function Foreldre() {
             maxLength={20}
             placeholder="Skriv navn..."
             autoComplete="off"
-            onChange={e => setNavnInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && lagreNavn()}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setNavnInput(e.target.value)}
+            onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && lagreNavn()}
           />
           <button className="fp-handling-btn" onClick={lagreNavn}>Lagre</button>
         </div>
@@ -88,8 +88,8 @@ function Foreldre() {
             maxLength={50}
             placeholder="Oppdragnavn..."
             autoComplete="off"
-            onChange={e => setOppdragInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && handleLeggTilOppdrag()}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setOppdragInput(e.target.value)}
+            onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && handleLeggTilOppdrag()}
           />
           <input
             className="fp-tekst-input fp-poeng-input"
@@ -97,8 +97,8 @@ function Foreldre() {
             value={poengInput}
             min={1}
             placeholder="Poeng"
-            onChange={e => setPoengInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && handleLeggTilOppdrag()}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setPoengInput(e.target.value)}
+            onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && handleLeggTilOppdrag()}
           />
         </div>
         <button className="fp-handling-btn fp-handling-btn-full" onClick={handleLeggTilOppdrag}>
@@ -117,8 +117,8 @@ function Foreldre() {
             maxLength={60}
             placeholder="F.eks. 30 min ekstra skjermtid"
             autoComplete="off"
-            onChange={e => setBelonningInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && handleLeggTilBelonning()}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setBelonningInput(e.target.value)}
+            onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && handleLeggTilBelonning()}
           />
           <button className="fp-handling-btn" onClick={handleLeggTilBelonning}>Legg til</button>
         </div>

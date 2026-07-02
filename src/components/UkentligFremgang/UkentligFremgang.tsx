@@ -1,3 +1,4 @@
+import { CSSProperties } from 'react'
 import { useZiimo } from '../../context/ZiimoContext'
 import { ukensDager } from '../../utils/dato'
 
@@ -24,7 +25,7 @@ function UkentligFremgang() {
             <div key={d.dato} className="week-col">
               <div
                 className={`week-bar-fill${d.dato === iDag ? ' is-today' : ''}`}
-                style={{ '--bar-height': hoyde }}
+                style={{ '--bar-height': hoyde } as CSSProperties}
               />
             </div>
           )

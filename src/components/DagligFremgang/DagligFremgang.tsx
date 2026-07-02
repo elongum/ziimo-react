@@ -1,3 +1,4 @@
+import { CSSProperties } from 'react'
 import { useZiimo } from '../../context/ZiimoContext'
 import { DAG_MAL } from '../../utils/dato'
 
@@ -21,7 +22,7 @@ function DagligFremgang() {
         ))}
       </div>
       <div className="daily-bar-track">
-        <div className="daily-bar-fill" style={{ '--bar-width': `${prosent}%` }} />
+        <div className="daily-bar-fill" style={{ '--bar-width': `${prosent}%` } as CSSProperties} />
       </div>
     </div>
   )

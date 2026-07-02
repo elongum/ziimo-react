@@ -92,7 +92,7 @@ describe('AuthContext – loggInn', () => {
     })
 
     expect(localStorage.getItem(SK.token)).toBe(token)
-    expect(JSON.parse(localStorage.getItem(SK.bruker)).navn).toBe('Emil')
+    expect(JSON.parse(localStorage.getItem(SK.bruker)!).navn).toBe('Emil')
   })
 })
 

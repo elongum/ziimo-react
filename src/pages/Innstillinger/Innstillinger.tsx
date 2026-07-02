@@ -1,11 +1,18 @@
-import { useState } from 'react'
+import { useState, ChangeEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Innstillinger.css'
 import { useZiimo } from '../../context/ZiimoContext'
 import { useAuth } from '../../context/AuthContext'
 import { SK } from '../../utils/storage-keys'
 
-function ToggleSwitch({ id, sjekket, onChange, label }) {
+interface ToggleSwitchProps {
+  id: string
+  sjekket: boolean
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void
+  label: string
+}
+
+function ToggleSwitch({ id, sjekket, onChange, label }: ToggleSwitchProps) {
   return (
     <label className="toggle-switch" aria-label={label}>
       <input type="checkbox" id={id} checked={sjekket} onChange={onChange} />
@@ -28,7 +35,7 @@ function Innstillinger() {
   const [personvernApen, setPersonvernApen] = useState(false)
   const [visSlettDialog,  setVisSlettDialog]  = useState(false)
 
-  function handleMoerktTema(e) {
+  function handleMoerktTema(e: ChangeEvent<HTMLInputElement>) {
     const dark = e.target.checked
     setMoerktTema(dark)
     if (dark) {
@@ -40,7 +47,7 @@ function Innstillinger() {
     }
   }
 
-  function handleLydeffekter(e) {
+  function handleLydeffekter(e: ChangeEvent<HTMLInputElement>) {
     const paa = e.target.checked
     setLydeffekter(paa)
     localStorage.setItem(SK.sound, paa ? 'on' : 'off')
@@ -130,7 +137,6 @@ function Innstillinger() {
         </div>
       )}
 
-      {/* Bekreftelsesdialog */}
       <div className={`dialog-overlay${visSlettDialog ? ' active' : ''}`}>
         <div className="dialog-kort">
           <p className="dialog-tekst">

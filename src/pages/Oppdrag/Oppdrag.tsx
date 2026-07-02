@@ -12,10 +12,10 @@ const MELDINGER = [
   "Du er på vei til å bli en superhelt! 🦸",
 ]
 
-const VARIGHET_KLASSE = { Rask: 'duration-rask', Medium: 'duration-medium', Lang: 'duration-lang' }
-const KATEGORI_KLASSE = { fysisk: 'cat-fysisk', natur: 'cat-natur', kreativitet: 'cat-kreativitet', sosial: 'cat-sosial' }
+const VARIGHET_KLASSE: Record<string, string> = { Rask: 'duration-rask', Medium: 'duration-medium', Lang: 'duration-lang' }
+const KATEGORI_KLASSE: Record<string, string> = { fysisk: 'cat-fysisk', natur: 'cat-natur', kreativitet: 'cat-kreativitet', sosial: 'cat-sosial' }
 
-function tilfeldigMelding(unntatt) {
+function tilfeldigMelding(unntatt: string): string {
   const andre = MELDINGER.filter(m => m !== unntatt)
   return andre[Math.floor(Math.random() * andre.length)]
 }
@@ -50,8 +50,8 @@ function Oppdrag() {
     setMelding(m => tilfeldigMelding(m))
   }
 
-  function setVarighet(v) { setVarighetFilter(v); setStartett(false) }
-  function setSted(s)     { setStedFilter(s);     setStartett(false) }
+  function setVarighet(v: string) { setVarighetFilter(v); setStartett(false) }
+  function setSted(s: string)     { setStedFilter(s);     setStartett(false) }
 
   return (
     <div className="oppdrag-screen">
