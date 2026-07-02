@@ -35,7 +35,6 @@ function Header() {
   const erHjem           = pathname === '/'
   const erOppdrag        = pathname === '/oppdrag'
   const erForeldreSide   = pathname === '/foreldre' || pathname === '/innstillinger'
-  const erLogin          = pathname === '/login'
 
   return (
     <>
@@ -60,18 +59,16 @@ function Header() {
             </div>
           )}
 
-          {!erLogin && (
-            <button
-              className={`hamburger-btn${menuApen ? ' is-open' : ''}`}
-              onClick={() => setMenuApen(v => !v)}
-              aria-label="Meny"
-              aria-expanded={menuApen}
-            >
-              <span className="hb-line" />
-              <span className="hb-line" />
-              <span className="hb-line" />
-            </button>
-          )}
+          <button
+            className={`hamburger-btn${menuApen ? ' is-open' : ''}`}
+            onClick={() => setMenuApen(v => !v)}
+            aria-label="Meny"
+            aria-expanded={menuApen}
+          >
+            <span className="hb-line" />
+            <span className="hb-line" />
+            <span className="hb-line" />
+          </button>
         </div>
       </header>
 

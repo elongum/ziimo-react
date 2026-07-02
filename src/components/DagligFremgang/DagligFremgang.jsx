@@ -21,7 +21,7 @@ function DagligFremgang() {
         ))}
       </div>
       <div className="daily-bar-track">
-        <div className="daily-bar-fill" style={{ width: `${prosent}%` }} />
+        <div className="daily-bar-fill" style={{ '--bar-width': `${prosent}%` }} />
       </div>
     </div>
   )

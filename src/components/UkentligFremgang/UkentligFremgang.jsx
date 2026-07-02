@@ -24,7 +24,7 @@ function UkentligFremgang() {
             <div key={d.dato} className="week-col">
               <div
                 className={`week-bar-fill${d.dato === iDag ? ' is-today' : ''}`}
-                style={{ height: hoyde }}
+                style={{ '--bar-height': hoyde }}
               />
             </div>
           )

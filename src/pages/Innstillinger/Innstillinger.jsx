@@ -103,10 +103,10 @@ function Innstillinger() {
         </button>
         <div className={`innstillinger-ekspander-kropp${personvernApen ? ' open' : ''}`}>
           <p className="innstillinger-personvern-tekst">
-            Ziimo lagrer all data lokalt på enheten din ved hjelp av <em>localStorage</em>.
-            Ingen data sendes til eksterne servere, og ingen personopplysninger samles inn
-            eller deles med tredjeparter.<br /><br />
-            Foreldre kan til enhver tid slette all lagret data fra innstillingsmenyen.
+            Uten innlogging lagres all data lokalt på enheten din ved hjelp av <em>localStorage</em>.
+            Ingen data deles med tredjeparter.<br /><br />
+            Ved bruk av foreldrekonto synkroniseres fremgang og autentiseringsdata med
+            Ziimos server. Foreldre kan til enhver tid slette all lagret data fra innstillingsmenyen.
           </p>
         </div>
         <div className="innstillinger-skillelinje" />
